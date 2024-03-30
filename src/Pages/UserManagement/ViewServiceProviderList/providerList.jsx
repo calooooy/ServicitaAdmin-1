@@ -4,7 +4,7 @@ import { Table, Dropdown, Menu, Space } from 'antd';
 import { getFirestore, collection, getDocs, onSnapshot, doc } from 'firebase/firestore';
 import Axios from 'axios';
 
-function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged }) {
+function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged, onSelectUser, toggleSearchBarVisibility }) {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -44,7 +44,7 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged 
             violationRecord: data.violationRecord || 0,
             services: data.services || [],
           };
-          const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
+          const response = await Axios.get(`http://192.168.100.40:5000/admin/getUser/${doc.id}`);
           const userData = response.data.data;
           providerInfo.email = userData.email;
           providerInfo.phone = userData.mobile;
@@ -137,6 +137,7 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged 
 
 useEffect(() => {
   if (selectedUser) {
+    onSelectUser(selectedUser);
     const db = getFirestore();
     const providerCollection = collection(db, "providers");
     const providerDoc = doc(providerCollection, selectedUser.id);
@@ -163,7 +164,7 @@ useEffect(() => {
         services: data.services || [],
         
       };
-      const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
+      const response = await Axios.get(`http://192.168.100.40:5000/admin/getUser/${doc.id}`);
       const userData = response.data.data;
       updatedUser.email = userData.email;
       updatedUser.phone = userData.mobile;
@@ -183,7 +184,7 @@ useEffect(() => {
 
     return () => unsubscribe();
   }
-}, []);
+}, [selectedUser, onSelectUser]);
 
 
   const renderName = (text, record) => (
@@ -212,10 +213,12 @@ useEffect(() => {
 
   const handleItemClick = (record) => {
     setSelectedUser(record);
+    toggleSearchBarVisibility(false);
   };
 
   const handleCloseProfile = () => {
     setSelectedUser(null);
+    toggleSearchBarVisibility(false);
   };
 
   const handleSubMenuClick = (record, action) => {
@@ -225,7 +228,7 @@ useEffect(() => {
         userId: record.id,
         action: action
       }
-    Axios.patch('http://192.168.1.10:5000/admin/suspendUser', userData)
+    Axios.patch('http://192.168.100.40:5000/admin/suspendUser', userData)
       .then((response) => {
         alert('User suspended successfully');
       }
@@ -242,7 +245,7 @@ useEffect(() => {
     const userData = {
       userId: record.id
     }   
-    Axios.delete(`http://192.168.1.10:5000/admin/deleteUser`, userData)
+    Axios.delete(`http://192.168.100.40:5000/admin/deleteUser`, userData)
       .then((response) => {
         const db = getFirestore();
         const providerCollection = collection(db, "providers");

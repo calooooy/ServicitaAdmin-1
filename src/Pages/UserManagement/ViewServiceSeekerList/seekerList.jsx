@@ -4,7 +4,7 @@ import { Table, Dropdown, Menu, Space } from 'antd';
 import { getFirestore, collection, getDocs, onSnapshot, doc } from 'firebase/firestore';
 import Axios from 'axios';
 
-function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
+function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUser, toggleSearchBarVisibility }) {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -40,7 +40,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
             reportsReceived: data.reportsReceived || 0,
             violationRecord: data.violationRecord || 0,
           };
-          const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
+          const response = await Axios.get(`http://192.168.100.40:5000/admin/getUser/${doc.id}`);
           const userData = response.data.data;
           seekerInfo.email = userData.email;
           seekerInfo.phone = userData.mobile;
@@ -112,6 +112,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
 
   useEffect(() => {
     if (selectedUser) {
+      onSelectUser(selectedUser);
       const db = getFirestore();
       const seekerCollection = collection(db, "seekers");
       const seekerDoc = doc(seekerCollection, selectedUser.id);
@@ -136,7 +137,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
           reportsReceived: data.reportsReceived || 0,
           violationRecord: data.violationRecord || 0,
         };
-        const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
+        const response = await Axios.get(`http://192.168.100.40:5000/admin/getUser/${doc.id}`);
         const userData = response.data.data;
         updatedUser.email = userData.email;
         updatedUser.phone = userData.mobile;
@@ -145,7 +146,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
   
       return () => unsubscribe();
     }
-  }, []);
+  }, [selectedUser, onSelectUser]);
 
   const renderName = (text, record) => (
     <span
@@ -173,10 +174,12 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
 
   const handleItemClick = (record) => {
     setSelectedUser(record);
+    toggleSearchBarVisibility(false);
   };
 
   const handleCloseProfile = () => {
     setSelectedUser(null);
+    toggleSearchBarVisibility(false);
   };
 
   const handleSubMenuClick = (record, action) => {
@@ -190,7 +193,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
       if (typeof action !== 'number') {
         throw new Error('Action must be a number');
       }
-    Axios.patch('http://192.168.1.10:5000/admin/suspendUser', userData)
+    Axios.patch('http://192.168.100.40:5000/admin/suspendUser', userData)
       .then((response) => {
         alert('User suspended successfully');
       }
@@ -204,7 +207,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
   }
 
   const handleDelete = (record) => {    
-    Axios.delete(`http://192.168.1.10:5000/admin/deleteUser`, userData)
+    Axios.delete(`http://192.168.100.40:5000/admin/deleteUser`, userData)
       .then((response) => {
         const db = getFirestore();
         const providerCollection = collection(db, "providers");
@@ -318,7 +321,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
             <div>
               <p className="profile-username">{selectedUser.fullName}</p>
               {/* Star rating frame */}
-              {renderStarRating(selectedUser.rating)}
+              
               {/* Add more details as needed */}
             </div>
 

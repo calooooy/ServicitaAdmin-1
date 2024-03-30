@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaSearch, FaSlidersH, FaTimes } from 'react-icons/fa';
 import Axios from 'axios';
 
 const SearchBar = ({ onSearch, onSort, findByCategory, findByCity, findByBarangay, findByFlag }) => {
   const [showSidebar, setShowSidebar] = useState(false);
+  const sidebarRef = useRef(null);
+  const containerRef = useRef(null);
+
   const [sortBy, setSortBy] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('');
@@ -26,9 +29,23 @@ const SearchBar = ({ onSearch, onSort, findByCategory, findByCity, findByBaranga
     setShowSidebar(!showSidebar);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        closeSidebar();
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   const closeSidebar = () => {
     setShowSidebar(false);
-    
+
   };
 
   const resetFilters = () => {
@@ -94,7 +111,7 @@ const SearchBar = ({ onSearch, onSort, findByCategory, findByCity, findByBaranga
   };
 
   return (
-    <div>
+    <div ref={containerRef}>
       <form onSubmit={handleSubmit} className="search-bar-container">
         <div className="search-bar">
           <FaSearch className="search-icon" />
@@ -112,7 +129,7 @@ const SearchBar = ({ onSearch, onSort, findByCategory, findByCity, findByBaranga
         </div>
       </form>
       {showSidebar && (
-        <Sidebar onClose={closeSidebar} sortBy={sortBy} onSort={handleSort} resetFilters={resetFilters} setSelectedCategory={handleCategoryChange} setSelectedLocation1={handleCityChange} setSelectedLocation2={handleBarangayChange} selectedType={selectedType} selectedCity={selectedCity} selectedBarangay={selectedBarangay} flaggedProviders={flaggedProviders} handleCheckboxChange={handleCheckboxChange}  />
+        <Sidebar ref={sidebarRef} onClose={closeSidebar} sortBy={sortBy} onSort={handleSort} resetFilters={resetFilters} setSelectedLocation1={handleCityChange} setSelectedLocation2={handleBarangayChange} selectedCity={selectedCity} selectedBarangay={selectedBarangay} flaggedProviders={flaggedProviders} handleCheckboxChange={handleCheckboxChange} />
       )}
     </div>
   );
@@ -124,26 +141,26 @@ const Sidebar = ({ onClose, sortBy, onSort, resetFilters, setSelectedCategory, s
   const [locations, setLocations] = useState([]);
   const [selectedTypes, setSelectedType] = useState(selectedType)
   const [selectedCitys, setSelectedCity] = useState(selectedCity);
-  const [selectedBarangays, setSelectedBarangay] = useState(selectedBarangay);  
+  const [selectedBarangays, setSelectedBarangay] = useState(selectedBarangay);
 
   const fetchServices = async () => {
     try {
-        const response = await Axios.get('http://192.168.1.10:5000/service/getServices');
-        setServices(response.data.data);
+      const response = await Axios.get('http://192.168.100.40:5000/service/getServices');
+      setServices(response.data.data);
     } catch (error) {
-        console.error('Error fetching services:', error);
+      console.error('Error fetching services:', error);
     }
   };
 
   const fetchLocations = async () => {
     try {
-        const response = await Axios.get('http://192.168.1.10:5000/location/getCities');
-        setLocations(response.data.data);
+      const response = await Axios.get('http://192.168.100.40:5000/location/getCities');
+      setLocations(response.data.data);
     } catch (error) {
-        console.error('Error fetching locations:', error);
+      console.error('Error fetching locations:', error);
     }
   };
-        
+
 
   const handleCategoryChange = (event) => {
     const { value } = event.target;
@@ -187,7 +204,7 @@ const Sidebar = ({ onClose, sortBy, onSort, resetFilters, setSelectedCategory, s
       <div className='sidebar-body'>
         <div className="dropdown-container">
 
-          
+
           <label htmlFor="category-dropdown">Category</label>
           <select id="category-dropdown" onChange={handleCategoryChange} value={selectedTypes}>
             <option value=''>Select a category</option>
@@ -204,16 +221,16 @@ const Sidebar = ({ onClose, sortBy, onSort, resetFilters, setSelectedCategory, s
             ))}
           </select>
 
-              
 
-          { selectedCity && (
+
+          {selectedCity && (
             <select id="location-dropdown2" onChange={handleLocationChange2} value={selectedBarangays}>
-            <option value=''>Select a barangay</option>
-            {selectedCity && locations.find(location => location.name === selectedCity)?.barangays.map(barangay => (
-  <option key={barangay} value={barangay}>{barangay}</option>
-))}
-          </select>
-          ) }
+              <option value=''>Select a barangay</option>
+              {selectedCity && locations.find(location => location.name === selectedCity)?.barangays.map(barangay => (
+                <option key={barangay} value={barangay}>{barangay}</option>
+              ))}
+            </select>
+          )}
 
           <div className="checkbox-container">
             <div className="label-and-buttons-container">

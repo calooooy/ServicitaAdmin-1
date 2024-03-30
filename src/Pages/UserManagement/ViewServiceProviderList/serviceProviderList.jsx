@@ -10,6 +10,8 @@ function ViewServiceProviderList() {
   const [city, setCity] = useState('');
   const [barangay, setBarangay] = useState('');
   const [flagged, setFlagged] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null); // New state to track selected user
+  const [isUserSelected, setIsUserSelected] = useState(false);
 
   const handleSearch = (searchTerm) => {
     setSearchTerm(searchTerm);
@@ -44,17 +46,29 @@ function ViewServiceProviderList() {
     setFlagged(flagged);
   }
 
+  const handleUserSelect = (user) => {
+    setSelectedUser(user);
+    setIsUserSelected(true);
+  }
+
+  const handleBackButtonClick = () => {
+    setSelectedUser(null);
+    setIsUserSelected(false); // Set isUserSelected to false when the back button is clicked
+  }
+
+
   return (
     <div style={{ width: '100%' }}>
       <h1 className='DashboardHeader'>View Service Provider List</h1>
       <hr className='Divider' style={{ width: '1185px' }} />
-      <div style={{ width: '1150px' }}>
-        <SearchBar onSearch={handleSearch} onSort={handleSort} findByCategory={handleCategory} findByCity={handleCity} findByBarangay={handleBarangay} findByFlag={handleFlagged} />
-      </div>
+      {!isUserSelected && ( // Render the SearchBar only if a user is not selected
+        <div style={{ width: '1150px' }}>
+          <SearchBar onSearch={handleSearch} onSort={handleSort} findByCategory={handleCategory} findByCity={handleCity} findByBarangay={handleBarangay} findByFlag={handleFlagged} />
+        </div>
+      )}
       <div>
-      <ProviderList searchTerm={searchTerm} sortTerm={sortTerm} category={category} city={city} barangay={barangay} flagged={flagged} />
+        <ProviderList searchTerm={searchTerm} sortTerm={sortTerm} category={category} city={city} barangay={barangay} flagged={flagged} onSelectUser={handleUserSelect} toggleSearchBarVisibility={setIsUserSelected} />
       </div>
-
     </div>
   );
 }
