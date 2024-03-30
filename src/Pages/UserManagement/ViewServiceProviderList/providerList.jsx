@@ -80,7 +80,7 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged 
     return () => unsubscribe();
 
 
-  }, [flagged]);
+  }, [flagged, selectedUser]);
   
 
   const filteredDataByCategory = dataSource.filter((data) => {

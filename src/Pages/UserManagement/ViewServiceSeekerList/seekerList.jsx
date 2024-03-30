@@ -65,7 +65,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
     return () => unsubscribe();
 
 
-  }, [flagged]);
+  }, [flagged, selectedUser]);
       
   const filteredDataByCity = dataSource.filter((data) => {
 
