@@ -129,7 +129,7 @@ const SearchBar = ({ onSearch, onSort, findByCategory, findByCity, findByBaranga
         </div>
       </form>
       {showSidebar && (
-        <Sidebar ref={sidebarRef} onClose={closeSidebar} sortBy={sortBy} onSort={handleSort} resetFilters={resetFilters} setSelectedLocation1={handleCityChange} setSelectedLocation2={handleBarangayChange} selectedCity={selectedCity} selectedBarangay={selectedBarangay} flaggedProviders={flaggedProviders} handleCheckboxChange={handleCheckboxChange} />
+        <Sidebar ref={sidebarRef} onClose={closeSidebar} sortBy={sortBy} onSort={handleSort} resetFilters={resetFilters} setSelectedCategory={handleCategoryChange} setSelectedLocation1={handleCityChange} setSelectedLocation2={handleBarangayChange} selectedCity={selectedCity} selectedBarangay={selectedBarangay} flaggedProviders={flaggedProviders} handleCheckboxChange={handleCheckboxChange} />
       )}
     </div>
   );
