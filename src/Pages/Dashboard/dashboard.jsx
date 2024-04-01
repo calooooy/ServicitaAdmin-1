@@ -3,6 +3,7 @@ import '../../Admin.css';
 import { Space, Table } from 'antd';
 import './../../firebase';
 import { getFirestore, addDoc, collection, getDocs, onSnapshot } from 'firebase/firestore';
+import Axios from 'axios';
 
 function Dashboard() {
 
@@ -125,7 +126,7 @@ function TopPerforming() {
                 const querySnapshot = await getDocs(providerCollection);
                 const providerData = [];
 
-                querySnapshot.forEach((doc) => {
+                await Promise.all(querySnapshot.docs.map(async (doc) => {
                     const data = doc.data();
                     const firstName = data.name?.firstName || "";
                     const lastName = data.name?.lastName || "";
@@ -133,12 +134,15 @@ function TopPerforming() {
                     const providerInfo = {
                         id: doc.id,
                         fullName: fullName,
-                        profileImage: data.profileImage|| "",
                         rating: data.rating || 0,
                         completedServices: data.completedServices || 0
                     };
+                    const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
+                    const userData = response.data.data;
+                    console.log(userData);
+                    providerInfo.profileImage = userData.profileImage;
                     providerData.push(providerInfo);
-                });
+                }));
 
                 const rankedProviders = providerData.map(provider => ({
                     ...provider,

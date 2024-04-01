@@ -4,7 +4,7 @@ import { Table, Dropdown, Menu, Space } from 'antd';
 import { getFirestore, collection, getDocs, onSnapshot, doc } from 'firebase/firestore';
 import Axios from 'axios';
 
-function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
+function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUser, toggleSearchBarVisibility }) {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -32,7 +32,6 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
           const seekerInfo = {
             id: doc.id,
             fullName: fullName,
-            profileImage: data.profileImage || "",
             address: fullAddress,
             city: data.address.cityMunicipality || "",
             barangay: data.address.barangay || "",
@@ -42,6 +41,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
           };
           const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
           const userData = response.data.data;
+          seekerInfo.profileImage = userData.profileImage;
           seekerInfo.email = userData.email;
           seekerInfo.phone = userData.mobile;
           seekerInfo.suspension = userData.suspension;
@@ -66,8 +66,17 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
 
 
   }, [flagged, selectedUser]);
-      
-  const filteredDataByCity = dataSource.filter((data) => {
+    
+
+  const filteredDataByFlag = dataSource.filter((data) => {
+    if (flagged === false) {
+      return data;
+    } else if (data.suspension && data.suspension.isSuspended === true) {
+      return data;
+    }
+});
+
+  const filteredDataByCity = filteredDataByFlag.filter((data) => {
 
     if (city === '') {
       return data;
@@ -102,16 +111,10 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
     }
   });
 
-  const filteredDataByFlag = filteredDataBySort.filter((data) => {
-    if (flagged === false) {
-      return data;
-    } else if (data.suspension && data.suspension.isSuspended === true) {
-      return data;
-    }
-});
 
   useEffect(() => {
     if (selectedUser) {
+      onSelectUser(selectedUser);
       const db = getFirestore();
       const seekerCollection = collection(db, "seekers");
       const seekerDoc = doc(seekerCollection, selectedUser.id);
@@ -129,7 +132,6 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
         const updatedUser = {
           id: doc.id,
           fullName: fullName,
-          profileImage: data.profileImage || "",
           address: fullAddress,
           rating: data.rating || 0,
           servicesAvailed: data.servicesAvailed || 0,
@@ -138,6 +140,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
         };
         const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
         const userData = response.data.data;
+        updatedUser.profileImage = userData.profileImage;
         updatedUser.email = userData.email;
         updatedUser.phone = userData.mobile;
         setSelectedUser(updatedUser);
@@ -145,7 +148,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
   
       return () => unsubscribe();
     }
-  }, []);
+  }, [selectedUser, onSelectUser]);
 
   const renderName = (text, record) => (
     <span
@@ -173,10 +176,12 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
 
   const handleItemClick = (record) => {
     setSelectedUser(record);
+    toggleSearchBarVisibility(false);
   };
 
   const handleCloseProfile = () => {
     setSelectedUser(null);
+    toggleSearchBarVisibility(false);
   };
 
   const handleSubMenuClick = (record, action) => {
@@ -318,7 +323,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
             <div>
               <p className="profile-username">{selectedUser.fullName}</p>
               {/* Star rating frame */}
-              {renderStarRating(selectedUser.rating)}
+              
               {/* Add more details as needed */}
             </div>
 
@@ -374,7 +379,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged }) {
               }
             ]}
             loading={loading}
-            dataSource={filteredDataByFlag}
+            dataSource={filteredDataBySort}
             pagination={false}
           />
         </div>

@@ -4,7 +4,7 @@ import { Table, Dropdown, Menu, Space } from 'antd';
 import { getFirestore, collection, getDocs, onSnapshot, doc } from 'firebase/firestore';
 import Axios from 'axios';
 
-function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged }) {
+function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged, onSelectUser, toggleSearchBarVisibility }) {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -34,7 +34,6 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged 
           const providerInfo = {
             id: doc.id,
             fullName: fullName,
-            profileImage: data.profileImage || "",
             address: fullAddress,
             city: data.address.cityMunicipality || "",
             barangay: data.address.barangay || "",
@@ -46,6 +45,7 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged 
           };
           const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
           const userData = response.data.data;
+          providerInfo.profileImage = userData.profileImage;
           providerInfo.email = userData.email;
           providerInfo.phone = userData.mobile;
           providerInfo.suspension = userData.suspension;
@@ -83,7 +83,15 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged 
   }, [flagged, selectedUser]);
   
 
-  const filteredDataByCategory = dataSource.filter((data) => {
+  const filteredDataByFlag = dataSource.filter((data) => {
+    if (flagged === false) {
+      return data;
+    } else if (data.suspension && data.suspension.isSuspended === true) {
+      return data;
+    }
+});
+
+  const filteredDataByCategory = filteredDataByFlag.filter((data) => {
     if (category === '') {
       return data;
     } else if (data.services.some((service) => service.serviceType === category)) {
@@ -126,17 +134,12 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged 
     }
   });
 
-  const filteredDataByFlag = filteredDataBySort.filter((data) => {
-    if (flagged === false) {
-      return data;
-    } else if (data.suspension && data.suspension.isSuspended === true) {
-      return data;
-    }
-});
+  
 
 
 useEffect(() => {
   if (selectedUser) {
+    onSelectUser(selectedUser);
     const db = getFirestore();
     const providerCollection = collection(db, "providers");
     const providerDoc = doc(providerCollection, selectedUser.id);
@@ -154,7 +157,6 @@ useEffect(() => {
       const updatedUser = {
         id: doc.id,
         fullName: fullName,
-        profileImage: data.profileImage || "",
         address: fullAddress,
         rating: data.rating || 0,
         completedServices: data.completedServices || 0,
@@ -165,6 +167,7 @@ useEffect(() => {
       };
       const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
       const userData = response.data.data;
+      updatedUser.profileImage = userData.profileImage;
       updatedUser.email = userData.email;
       updatedUser.phone = userData.mobile;
       const serviceCollection = collection(db, "services");
@@ -183,7 +186,7 @@ useEffect(() => {
 
     return () => unsubscribe();
   }
-}, []);
+}, [selectedUser, onSelectUser]);
 
 
   const renderName = (text, record) => (
@@ -212,10 +215,12 @@ useEffect(() => {
 
   const handleItemClick = (record) => {
     setSelectedUser(record);
+    toggleSearchBarVisibility(false);
   };
 
   const handleCloseProfile = () => {
     setSelectedUser(null);
+    toggleSearchBarVisibility(false);
   };
 
   const handleSubMenuClick = (record, action) => {
@@ -427,7 +432,7 @@ useEffect(() => {
               }
             ]}
             loading={loading}
-            dataSource={filteredDataByFlag}
+            dataSource={filteredDataBySort}
             pagination={false}
           />
         </div>

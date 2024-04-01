@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaSearch, FaSlidersH, FaTimes } from 'react-icons/fa';
 import Axios from 'axios';
 
-const SearchBar = ({ onSearch, onSort, findByCity, findByBarangay, findByFlag }) => {
+const SearchBar = ({ onSearch, onSort, findByCity, findByBarangay, findByFlag, savedSearchTermm, savedCityy, savedBarangayy, savedFlaggedd }) => {
   const [showSidebar, setShowSidebar] = useState(false);
+  const sidebarRef = useRef(null);
+  const containerRef = useRef(null);
+
   const [sortBy, setSortBy] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
-  const [selectedBarangay, setSelectedBarangay] = useState('');
-  const [flaggedProviders, setFlaggedProviders] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(savedSearchTermm || '');
+  const [selectedCity, setSelectedCity] = useState(savedCityy || '');
+  const [selectedBarangay, setSelectedBarangay] = useState(savedBarangayy || '');
+  const [flaggedProviders, setFlaggedProviders] = useState(savedFlaggedd || false);
 
   const handleChange = (event) => {
     const { value } = event.target;
@@ -25,30 +28,44 @@ const SearchBar = ({ onSearch, onSort, findByCity, findByBarangay, findByFlag })
     setShowSidebar(!showSidebar);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        closeSidebar();
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   const closeSidebar = () => {
     setShowSidebar(false);
   };
 
   const resetFilters = () => {
-    setSearchTerm('');
+    handleChange({ target: { value: '' } });
     setSelectedBarangay('');
     setSelectedCity('');
     setSortBy(null);
     findByCity('');
     findByBarangay('');
     setFlaggedProviders(false);
-  
+
     const dropdown = document.getElementById('location-dropdown');
     dropdown.selectedIndex = 0;
-  
+
     const flaggedCheckbox = document.getElementById('flagged-providers-checkbox');
     flaggedCheckbox.checked = false;
-  
+
     const sortButtons = document.querySelectorAll('.sort-button');
     sortButtons.forEach(btn => btn.classList.remove('active'));
-  
+
   };
-  
+
 
   const handleSort = (sortByValue) => {
     if (sortBy === sortByValue) {
@@ -79,7 +96,7 @@ const SearchBar = ({ onSearch, onSort, findByCity, findByBarangay, findByFlag })
   };
 
   return (
-    <div>
+    <div ref={containerRef}>
       <form onSubmit={handleSubmit} className="search-bar-container">
         <div className="search-bar">
           <FaSearch className="search-icon" />
@@ -97,7 +114,7 @@ const SearchBar = ({ onSearch, onSort, findByCity, findByBarangay, findByFlag })
         </div>
       </form>
       {showSidebar && (
-        <Sidebar onClose={closeSidebar} sortBy={sortBy} onSort={handleSort} resetFilters={resetFilters} setSelectedLocation1={handleCityChange} setSelectedLocation2={handleBarangayChange} selectedCity={selectedCity} selectedBarangay={selectedBarangay} flaggedProviders={flaggedProviders} handleCheckboxChange={handleCheckboxChange} />
+        <Sidebar ref={sidebarRef} onClose={closeSidebar} sortBy={sortBy} onSort={handleSort} resetFilters={resetFilters} setSelectedLocation1={handleCityChange} setSelectedLocation2={handleBarangayChange} selectedCity={selectedCity} selectedBarangay={selectedBarangay} flaggedProviders={flaggedProviders} handleCheckboxChange={handleCheckboxChange} />
       )}
     </div>
   );
@@ -107,14 +124,14 @@ const Sidebar = ({ onClose, sortBy, onSort, resetFilters, setSelectedLocation1, 
 
   const [locations, setLocations] = useState([]);
   const [selectedCitys, setSelectedCity] = useState(selectedCity);
-  const [selectedBarangays, setSelectedBarangay] = useState(selectedBarangay);  
+  const [selectedBarangays, setSelectedBarangay] = useState(selectedBarangay);
 
   const fetchLocations = async () => {
     try {
-        const response = await Axios.get('http://192.168.1.10:5000/location/getCities');
-        setLocations(response.data.data);
+      const response = await Axios.get('http://192.168.1.10:5000/location/getCities');
+      setLocations(response.data.data);
     } catch (error) {
-        console.error('Error fetching locations:', error);
+      console.error('Error fetching locations:', error);
     }
   };
 
@@ -151,7 +168,7 @@ const Sidebar = ({ onClose, sortBy, onSort, resetFilters, setSelectedLocation1, 
       </div>
       <div className='sidebar-body'>
         <div className="dropdown-container">
-        <label htmlFor="location-dropdown">Location</label>
+          <label htmlFor="location-dropdown">Location</label>
           <select id="location-dropdown1" onChange={handleLocationChange} value={selectedCitys}>
             <option value=''>Select a city</option>
             {locations.map(location => (
@@ -159,14 +176,14 @@ const Sidebar = ({ onClose, sortBy, onSort, resetFilters, setSelectedLocation1, 
             ))}
           </select>
 
-          { selectedCity && (
+          {selectedCity && (
             <select id="location-dropdown2" onChange={handleLocationChange2} value={selectedBarangays}>
-            <option value=''>Select a barangay</option>
-            {selectedCity && locations.find(location => location.name === selectedCity)?.barangays.map(barangay => (
-  <option key={barangay} value={barangay}>{barangay}</option>
-))}
-          </select>
-          ) }
+              <option value=''>Select a barangay</option>
+              {selectedCity && locations.find(location => location.name === selectedCity)?.barangays.map(barangay => (
+                <option key={barangay} value={barangay}>{barangay}</option>
+              ))}
+            </select>
+          )}
 
           <div className="checkbox-container">
             <div className="label-and-buttons-container">
@@ -188,7 +205,7 @@ const Sidebar = ({ onClose, sortBy, onSort, resetFilters, setSelectedLocation1, 
             </div>
             <div className="flagged-providers">
               <label htmlFor="flagged-providers-checkbox">Flagged Seekers</label>
-              <input className='flaggedCheckbox' type="checkbox" id="flagged-providers-checkbox" checked={flaggedProviders} onChange={handleCheckboxChange}/>
+              <input className='flaggedCheckbox' type="checkbox" id="flagged-providers-checkbox" checked={flaggedProviders} onChange={handleCheckboxChange} />
             </div>
           </div>
         </div>
