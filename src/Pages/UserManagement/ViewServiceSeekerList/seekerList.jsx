@@ -40,7 +40,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
             reportsReceived: data.reportsReceived || 0,
             violationRecord: data.violationRecord || 0,
           };
-          const response = await Axios.get(`http://192.168.100.40:5000/admin/getUser/${doc.id}`);
+          const response = await Axios.get(`http://192.168.1.5:5000/admin/getUser/${doc.id}`);
           const userData = response.data.data;
           seekerInfo.email = userData.email;
           seekerInfo.phone = userData.mobile;
@@ -137,7 +137,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
           reportsReceived: data.reportsReceived || 0,
           violationRecord: data.violationRecord || 0,
         };
-        const response = await Axios.get(`http://192.168.100.40:5000/admin/getUser/${doc.id}`);
+        const response = await Axios.get(`http://192.168.1.5:5000/admin/getUser/${doc.id}`);
         const userData = response.data.data;
         updatedUser.email = userData.email;
         updatedUser.phone = userData.mobile;
@@ -193,7 +193,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
       if (typeof action !== 'number') {
         throw new Error('Action must be a number');
       }
-    Axios.patch('http://192.168.100.40:5000/admin/suspendUser', userData)
+    Axios.patch('http://192.168.1.5:5000/admin/suspendUser', userData)
       .then((response) => {
         alert('User suspended successfully');
       }
@@ -207,7 +207,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
   }
 
   const handleDelete = (record) => {    
-    Axios.delete(`http://192.168.100.40:5000/admin/deleteUser`, userData)
+    Axios.delete(`http://192.168.1.5:5000/admin/deleteUser`, userData)
       .then((response) => {
         const db = getFirestore();
         const providerCollection = collection(db, "providers");

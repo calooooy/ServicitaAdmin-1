@@ -44,7 +44,7 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
             violationRecord: data.violationRecord || 0,
             services: data.services || [],
           };
-          const response = await Axios.get(`http://192.168.100.40:5000/admin/getUser/${doc.id}`);
+          const response = await Axios.get(`http://192.168.1.5:5000/admin/getUser/${doc.id}`);
           const userData = response.data.data;
           providerInfo.email = userData.email;
           providerInfo.phone = userData.mobile;
@@ -164,7 +164,7 @@ useEffect(() => {
         services: data.services || [],
         
       };
-      const response = await Axios.get(`http://192.168.100.40:5000/admin/getUser/${doc.id}`);
+      const response = await Axios.get(`http://192.168.1.5:5000/admin/getUser/${doc.id}`);
       const userData = response.data.data;
       updatedUser.email = userData.email;
       updatedUser.phone = userData.mobile;
@@ -228,7 +228,7 @@ useEffect(() => {
         userId: record.id,
         action: action
       }
-    Axios.patch('http://192.168.100.40:5000/admin/suspendUser', userData)
+    Axios.patch('http://192.168.1.5:5000/admin/suspendUser', userData)
       .then((response) => {
         alert('User suspended successfully');
       }
@@ -245,7 +245,7 @@ useEffect(() => {
     const userData = {
       userId: record.id
     }   
-    Axios.delete(`http://192.168.100.40:5000/admin/deleteUser`, userData)
+    Axios.delete(`http://192.168.1.5:5000/admin/deleteUser`, userData)
       .then((response) => {
         const db = getFirestore();
         const providerCollection = collection(db, "providers");

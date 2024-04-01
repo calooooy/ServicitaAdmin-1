@@ -145,7 +145,7 @@ const Sidebar = ({ onClose, sortBy, onSort, resetFilters, setSelectedCategory, s
 
   const fetchServices = async () => {
     try {
-      const response = await Axios.get('http://192.168.100.40:5000/service/getServices');
+      const response = await Axios.get('http://192.168.1.5:5000/service/getServices');
       setServices(response.data.data);
     } catch (error) {
       console.error('Error fetching services:', error);
@@ -154,7 +154,7 @@ const Sidebar = ({ onClose, sortBy, onSort, resetFilters, setSelectedCategory, s
 
   const fetchLocations = async () => {
     try {
-      const response = await Axios.get('http://192.168.100.40:5000/location/getCities');
+      const response = await Axios.get('http://192.168.1.5:5000/location/getCities');
       setLocations(response.data.data);
     } catch (error) {
       console.error('Error fetching locations:', error);
