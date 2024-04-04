@@ -43,7 +43,7 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
             violationRecord: data.violationRecord || 0,
             services: data.services || [],
           };
-          const response = await Axios.get(`http://172.16.4.26:5000/admin/getUser/${doc.id}`);
+          const response = await Axios.get(`http://192.168.1.5:5000/admin/getUser/${doc.id}`);
           const userData = response.data.data;
           providerInfo.profileImage = userData.profileImage;
           providerInfo.email = userData.email;
@@ -219,12 +219,8 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
   };
 
   const handleCloseProfile = () => {
-    console.log(selectedUser)
-    if (selectedUser) {
-      setSelectedUser(null);
-      console.log(selectedUser);
-      toggleSearchBarVisibility(false);
-    }
+    setSelectedUser(null);
+    toggleSearchBarVisibility(false);
   };
 
   const handleSubMenuClick = (record, action) => {
@@ -234,14 +230,14 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
         userId: record.id,
         action: action
       }
-      Axios.patch('http://172.16.4.26:5000/admin/suspendUser', userData)
-        .then((response) => {
-          alert('User suspended successfully');
-        }
-        )
-        .catch((error) => {
-          console.error('Error suspending user: ', error);
-        });
+    Axios.patch('http://192.168.1.5:5000/admin/suspendUser', userData)
+      .then((response) => {
+        alert('User suspended successfully');
+      }
+      )
+      .catch((error) => {
+        console.error('Error suspending user: ', error);
+      });
     } catch (error) {
       console.error('Error suspending user: ', error);
     }
@@ -250,8 +246,8 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
   const handleDelete = (record) => {
     const userData = {
       userId: record.id
-    }
-    Axios.delete(`http://172.16.4.26:5000/admin/deleteUser`, userData)
+    }   
+    Axios.delete(`http://192.168.1.5:5000/admin/deleteUser`, userData)
       .then((response) => {
         const db = getFirestore();
         const providerCollection = collection(db, "providers");

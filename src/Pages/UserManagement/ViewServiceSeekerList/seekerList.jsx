@@ -180,12 +180,8 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
   };
 
   const handleCloseProfile = () => {
-    console.log(selectedUser)
-    if (selectedUser) {
-      setSelectedUser(null);
-      console.log(selectedUser);
-      toggleSearchBarVisibility(false);
-    }
+    setSelectedUser(null);
+    toggleSearchBarVisibility(false);
   };
 
   const handleSubMenuClick = (record, action) => {

@@ -25,7 +25,7 @@ function Dashboard() {
             });
             setSeekers(seekerData);
         };
-    
+
         const fetchProviders = async () => {
             const querySnapshot = await getDocs(providerCollection);
             const providerData = [];
@@ -34,7 +34,7 @@ function Dashboard() {
             });
             setProviders(providerData);
         };
-        
+
         const iterateOverCompletedServicesCount = async () => {
             const querySnapshot = await getDocs(providerCollection);
             let totalCount = 0;
@@ -59,18 +59,18 @@ function Dashboard() {
             const data = snapshot.docs.map(doc => doc.data());
             setSeekers(data);
         });
-    
+
         const unsubscribeProviders = onSnapshot(providerCollection, (snapshot) => {
             const data = snapshot.docs.map(doc => doc.data());
             setProviders(data);
         });
-    
-    
+
+
         return () => {
             unsubscribeSeekers();
             unsubscribeProviders();
         };
-    }, [seekerCollection, providerCollection ]);
+    }, [seekerCollection, providerCollection]);
 
 
     const seekerCount = seekers.length;
@@ -134,10 +134,11 @@ function TopPerforming() {
                     const providerInfo = {
                         id: doc.id,
                         fullName: fullName,
+                        profileImage: data.profileImage || "",
                         rating: data.rating || 0,
                         completedServices: data.completedServices || 0
                     };
-                    const response = await Axios.get(`http://172.16.4.26:5000/admin/getUser/${doc.id}`);
+                    const response = await Axios.get(`http://192.168.1.5:5000/admin/getUser/${doc.id}`);
                     const userData = response.data.data;
                     console.log(userData);
                     providerInfo.profileImage = userData.profileImage;
@@ -149,7 +150,7 @@ function TopPerforming() {
                     combinedScore: computeCombinedScore(provider.rating, provider.completedServices, 0.7, 0.3)
                 })).sort((a, b) => {
                     if (b.combinedScore !== a.combinedScore) {
-                        return b.combinedScore - a.combinedScore; 
+                        return b.combinedScore - a.combinedScore;
                     } else {
                         return a.fullName.localeCompare(b.fullName);
                     }
@@ -170,7 +171,7 @@ function TopPerforming() {
         const unsubscribe = onSnapshot(providerCollection, () => {
             fetchProviders();
         });
-    
+
         return () => unsubscribe();
     }, []);
 
@@ -182,9 +183,9 @@ function TopPerforming() {
 
     return (
         <div>
-            <h1 className="topPerformingTable">Top Performing Service Providers</h1>
+            <h1 className="topPerformingTableTitle">Top Performing Service Providers</h1>
             <Table
-                style={{ width: '100%' }}
+                style={{ width: '90%', marginLeft: '10px' }}
                 components={{
                     body: {
                         cell: ({ children }) => <td>{children}</td>
