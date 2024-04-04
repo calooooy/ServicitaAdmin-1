@@ -43,7 +43,7 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
             violationRecord: data.violationRecord || 0,
             services: data.services || [],
           };
-          const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
+          const response = await Axios.get(`http://172.16.4.26:5000/admin/getUser/${doc.id}`);
           const userData = response.data.data;
           providerInfo.profileImage = userData.profileImage;
           providerInfo.email = userData.email;
@@ -62,7 +62,7 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
           providerInfo.services = serviceData;
           providerData.push(providerInfo);
         }));
-        
+
         setDataSource(providerData);
         setLoading(false);
 
@@ -81,7 +81,7 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
 
 
   }, [flagged, selectedUser]);
-  
+
 
   const filteredDataByFlag = dataSource.filter((data) => {
     if (flagged === false) {
@@ -89,7 +89,7 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
     } else if (data.suspension && data.suspension.isSuspended === true) {
       return data;
     }
-});
+  });
 
   const filteredDataByCategory = filteredDataByFlag.filter((data) => {
     if (category === '') {
@@ -134,59 +134,59 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
     }
   });
 
-  
 
 
-useEffect(() => {
-  if (selectedUser) {
-    onSelectUser(selectedUser);
-    const db = getFirestore();
-    const providerCollection = collection(db, "providers");
-    const providerDoc = doc(providerCollection, selectedUser.id);
 
-    const unsubscribe = onSnapshot(providerDoc, async (doc) => {
-      const data = doc.data();
-      const firstName = data.name?.firstName || "";
-      const lastName = data.name?.lastName || "";
-      const fullName = `${firstName} ${lastName}`;
-      const streetAddress1 = data.address?.streetAddress1 || "";
-      const streetAddress2 = data.address?.streetAddress2 || "";
-      const barangay = data.address?.barangay || "";
-      const city = data.address?.cityMunicipality || "";
-      const fullAddress = `${streetAddress1}, ${streetAddress2}, ${barangay}, ${city}`;
-      const updatedUser = {
-        id: doc.id,
-        fullName: fullName,
-        address: fullAddress,
-        rating: data.rating || 0,
-        completedServices: data.completedServices || 0,
-        reportsReceived: data.reportsReceived || 0,
-        violationRecord: data.violationRecord || 0,
-        services: data.services || [],
-        
-      };
-      const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
-      const userData = response.data.data;
-      updatedUser.profileImage = userData.profileImage;
-      updatedUser.email = userData.email;
-      updatedUser.phone = userData.mobile;
-      const serviceCollection = collection(db, "services");
-      const serviceData = [];
-      await Promise.all(updatedUser.services.map(async (service) => {
-        const serviceDoc = await getDocs(serviceCollection);
-        serviceDoc.forEach((doc) => {
-          if (doc.id === service) {
-            serviceData.push(doc.data());
-          }
-        });
-      }));
-      updatedUser.services = serviceData;
-      setSelectedUser(updatedUser);
-    });
+  useEffect(() => {
+    if (selectedUser) {
+      onSelectUser(selectedUser);
+      const db = getFirestore();
+      const providerCollection = collection(db, "providers");
+      const providerDoc = doc(providerCollection, selectedUser.id);
 
-    return () => unsubscribe();
-  }
-}, [selectedUser, onSelectUser]);
+      const unsubscribe = onSnapshot(providerDoc, async (doc) => {
+        const data = doc.data();
+        const firstName = data.name?.firstName || "";
+        const lastName = data.name?.lastName || "";
+        const fullName = `${firstName} ${lastName}`;
+        const streetAddress1 = data.address?.streetAddress1 || "";
+        const streetAddress2 = data.address?.streetAddress2 || "";
+        const barangay = data.address?.barangay || "";
+        const city = data.address?.cityMunicipality || "";
+        const fullAddress = `${streetAddress1}, ${streetAddress2}, ${barangay}, ${city}`;
+        const updatedUser = {
+          id: doc.id,
+          fullName: fullName,
+          address: fullAddress,
+          rating: data.rating || 0,
+          completedServices: data.completedServices || 0,
+          reportsReceived: data.reportsReceived || 0,
+          violationRecord: data.violationRecord || 0,
+          services: data.services || [],
+
+        };
+        const response = await Axios.get(`http://172.16.4.26:5000/admin/getUser/${doc.id}`);
+        const userData = response.data.data;
+        updatedUser.profileImage = userData.profileImage;
+        updatedUser.email = userData.email;
+        updatedUser.phone = userData.mobile;
+        const serviceCollection = collection(db, "services");
+        const serviceData = [];
+        await Promise.all(updatedUser.services.map(async (service) => {
+          const serviceDoc = await getDocs(serviceCollection);
+          serviceDoc.forEach((doc) => {
+            if (doc.id === service) {
+              serviceData.push(doc.data());
+            }
+          });
+        }));
+        updatedUser.services = serviceData;
+        setSelectedUser(updatedUser);
+      });
+
+      return () => unsubscribe();
+    }
+  }, [selectedUser, onSelectUser]);
 
 
   const renderName = (text, record) => (
@@ -194,7 +194,7 @@ useEffect(() => {
       style={{ textAlign: 'left', fontSize: '20px', cursor: 'pointer' }}
       onClick={() => handleItemClick(record)}
     >
-      {text}  
+      {text}
     </span>
   );
 
@@ -219,35 +219,39 @@ useEffect(() => {
   };
 
   const handleCloseProfile = () => {
-    setSelectedUser(null);
-    toggleSearchBarVisibility(false);
+    console.log(selectedUser)
+    if (selectedUser) {
+      setSelectedUser(null);
+      console.log(selectedUser);
+      toggleSearchBarVisibility(false);
+    }
   };
 
   const handleSubMenuClick = (record, action) => {
-    
+
     try {
       const userData = {
         userId: record.id,
         action: action
       }
-    Axios.patch('http://192.168.1.10:5000/admin/suspendUser', userData)
-      .then((response) => {
-        alert('User suspended successfully');
-      }
-      )
-      .catch((error) => {
-        console.error('Error suspending user: ', error);
-      });
+      Axios.patch('http://172.16.4.26:5000/admin/suspendUser', userData)
+        .then((response) => {
+          alert('User suspended successfully');
+        }
+        )
+        .catch((error) => {
+          console.error('Error suspending user: ', error);
+        });
     } catch (error) {
       console.error('Error suspending user: ', error);
     }
   }
 
-  const handleDelete = (record) => { 
+  const handleDelete = (record) => {
     const userData = {
       userId: record.id
-    }   
-    Axios.delete(`http://192.168.1.10:5000/admin/deleteUser`, userData)
+    }
+    Axios.delete(`http://172.16.4.26:5000/admin/deleteUser`, userData)
       .then((response) => {
         const db = getFirestore();
         const providerCollection = collection(db, "providers");
@@ -276,7 +280,7 @@ useEffect(() => {
         console.error('Error deleting user: ', error);
       });
   }
-  
+
 
 
   const renderActions = (text, record) => (
@@ -317,7 +321,7 @@ useEffect(() => {
 
     return <div className="star-rating">{stars}</div>;
   };
-    
+
   function UserDetails({ userDetails }) {
     const { email, phone, address } = userDetails;
 
@@ -386,19 +390,19 @@ useEffect(() => {
             <div className='leftSide'>
               <UserDetails userDetails={selectedUser} />
               <div className='ServicesOffered'>Services Offered:
-              {selectedUser.services.map((service, index) => (
-                <div key={index} className='ServicesOfferedList' onClick={() => handleServiceClick(service)}>
-                  {service.name} ({service.serviceType})
-                </div>
-              ))
-              }
+                {selectedUser.services.map((service, index) => (
+                  <div key={index} className='ServicesOfferedList' onClick={() => handleServiceClick(service)}>
+                    {service.name} ({service.serviceType})
+                  </div>
+                ))
+                }
               </div>
             </div>
             <div class="verticalLine"></div>
             <div className="userDetailCardsContainerProvider">
-                <UserDetailCard title={"Completed Services"} value={selectedUser.completedServices} />
-                <UserDetailCard title={"Reports Received"} value={selectedUser.reportsReceived} />
-                <UserDetailCard title={"Violation Record"} value={selectedUser.violationRecord} />
+              <UserDetailCard title={"Completed Services"} value={selectedUser.completedServices} />
+              <UserDetailCard title={"Reports Received"} value={selectedUser.reportsReceived} />
+              <UserDetailCard title={"Violation Record"} value={selectedUser.violationRecord} />
             </div>
             <div className='Performance'>For graphs:</div>
           </div>
@@ -436,37 +440,46 @@ useEffect(() => {
             pagination={false}
           />
         </div>
-      
-      
+
+
       )}
 
       {showServiceOverlay && selectedService && (
-              <div className="serviceDetailsOverlay">
-                <div className="serviceDetails">
-                  <div className="serviceDetailsHeader">
-                    <div className="back-button" onClick={() => setShowServiceOverlay(false)}>
-                      <FaAngleLeft />
+        <div className="serviceDetailsOverlay">
+          <div className="serviceDetails">
+            <div className="serviceDetailsHeader">
+              <div className="back-button" onClick={() => setShowServiceOverlay(false)}>
+                <FaAngleLeft />
+              </div>
+              <div className="serviceDetailsTitle">{selectedService.name}</div>
+            </div>
+            <div className="serviceDetailsBody">
+              <hr></hr>
+              <div className="serviceDetailsDescription">{selectedService.description}</div>
+              <hr></hr>
+              <div className="serviceDetailsPrice"> ₱{selectedService.price.min} - ₱{selectedService.price.max}</div>
+              {/* Design a week schedule regarding the availability displaying all 7 days with start time and end time */}
+              <hr></hr>
+              <div className="serviceDetailsSchedule">
+                {selectedService.availability.map((day, index) => (
+                  <div>
+                    <div key={index} className="serviceDetailsDay">
+                      <div>
+                        <div className='dayLabel'>{day.day}</div>
+                      </div>
+                      <div>
+                        <div>{day.startTime}</div>
+                        <div> - </div>
+                        <div>{day.endTime}</div>
+                      </div>
                     </div>
-                    <div className="serviceDetailsTitle">{selectedService.name}</div>
                   </div>
-                  <div className="serviceDetailsBody">
-                    <div className="serviceDetailsDescription">{selectedService.description}</div>
-                    <div className="serviceDetailsPrice"> ₱{selectedService.price.min} - ₱{selectedService.price.max}</div>
-                    {/* Design a week schedule regarding the availability displaying all 7 days with start time and end time */}
-                    <div className="serviceDetailsSchedule">
-                      {selectedService.availability.map((day, index) => (
-                        <div key={index} className="serviceDetailsDay">
-                          <div>{day.day}</div>
-                          <div>{day.startTime}</div>
-                          <div> - </div>
-                          <div>{day.endTime}</div>
-                        </div>
-                      ))}
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
-            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 

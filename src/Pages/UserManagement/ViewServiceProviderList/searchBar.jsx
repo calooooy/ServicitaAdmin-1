@@ -151,7 +151,7 @@ const Sidebar = ({ onClose, sortBy, onSort, resetFilters, setSelectedCategory, s
 
   const fetchServices = async () => {
     try {
-      const response = await Axios.get('http://192.168.1.10:5000/service/getServices');
+      const response = await Axios.get('http://172.16.4.26:5000/service/getServices');
       setServices(response.data.data);
     } catch (error) {
       console.error('Error fetching services:', error);
@@ -160,7 +160,7 @@ const Sidebar = ({ onClose, sortBy, onSort, resetFilters, setSelectedCategory, s
 
   const fetchLocations = async () => {
     try {
-      const response = await Axios.get('http://192.168.1.10:5000/location/getCities');
+      const response = await Axios.get('http://172.16.4.26:5000/location/getCities');
       setLocations(response.data.data);
     } catch (error) {
       console.error('Error fetching locations:', error);
@@ -264,7 +264,7 @@ const Sidebar = ({ onClose, sortBy, onSort, resetFilters, setSelectedCategory, s
         </div>
         <div className="provider-sidebar-buttons">
           <button className="provider-reset-button" onClick={handleReset}>Reset</button>
-          <button className="provider-apply-button">Apply</button>
+          {/* <button className="provider-apply-button">Apply</button> */}
         </div>
       </div>
     </div>
