@@ -59,6 +59,7 @@ const SearchBar = ({ onSearch, onSort, findByCategory, findByCity, findByBaranga
     findByBarangay('');
     handleChange({ target: { value: '' } });
     setFlaggedProviders(false);
+    findByFlag(false);
 
     // Reset category dropdown to default option (e.g., Option 1)
     const categoryDropdown = document.getElementById('category-dropdown');

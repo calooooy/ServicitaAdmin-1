@@ -54,6 +54,7 @@ const SearchBar = ({ onSearch, onSort, findByCity, findByBarangay, findByFlag, s
     findByCity('');
     findByBarangay('');
     setFlaggedProviders(false);
+    findByFlag(false);
 
     const dropdown = document.getElementById('location-dropdown');
     dropdown.selectedIndex = 0;
