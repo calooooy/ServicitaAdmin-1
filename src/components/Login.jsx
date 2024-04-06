@@ -3,7 +3,7 @@ import './../Login.css';
 import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -15,18 +15,20 @@ const Login = () => {
         username: username,
         password: password,
       });
-      
+
       if (response.data.message === "Login successful") {
-        navigate('/home');
+        navigate('/home/dashboard');
         alert("Login successful");
+        onLogin();
       } else {
         alert("Login failed");
         console.log("Login failed");
       }
     } catch (error) {
       console.log(error);
+      alert("Login request failed. Please try again.");
     }
-}
+  }
 
 
   return (
@@ -38,23 +40,28 @@ const Login = () => {
         <h1 className="login-Admin">Admin</h1>
         <h1 className="login-Loginword">Login</h1>
         <form>
-          <label htmlFor="username" className="login-label">Username</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="login-input"
-          />
-
-          <label htmlFor="password" className="login-label">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="login-input"
-          />
+          <div className='inputDiv'>
+            <label htmlFor="username" className="login-label">Username</label>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="login-input"
+              placeholder='Enter Admin Username'
+            />
+          </div>
+          <div className='inputDiv'>
+            <label htmlFor="password" className="login-label">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="login-input"
+              placeholder='Enter Admin Password'
+            />
+          </div>
 
           <button type="button" onClick={handleLogin} className="login-button">
             Submit

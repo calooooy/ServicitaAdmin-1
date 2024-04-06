@@ -135,12 +135,12 @@
   margin-left: 15px;
 }
 
-.topPerformingTable {
+
+.topPerformingTableTitle {
   width: 400px;
   font-size: 25px;
-  text-align: left;
+  text-align: center;
   margin-bottom: 10px;
-  margin-left: 45px;
   font-family: 'GothicA1';
 
 }
@@ -154,7 +154,7 @@
 .search-bar-container {
   margin-top: 20px;
   margin-left: 20px;
-  margin-right:20px;
+  margin-right: 20px;
   width: 500;
   background-color: #ffffff;
   border-radius: 20px;
@@ -162,13 +162,12 @@
 
 .search-bar {
   position: relative;
-  width: 1090px;
+  width: 1140px;
 }
 
 .search-icon {
   position: absolute;
   left: 10px;
-  /* Adjust this value as needed */
   top: 50%;
   transform: translateY(-50%);
   margin-left: 15px;
@@ -179,21 +178,18 @@
   border: 0px solid #ccc;
   height: 40px;
   font-size: 16px;
-  width: 100%;
-  padding-inline-start: 50px;
+  width: calc(100% - 50px);
+  padding-left: 50px;
 }
 
 .filter-icon {
-  width: 20px;
-  height: 20px;
   position: absolute;
-  right: 0px;
+  right: 20px;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  color: gray
+  color: gray;
 }
-
 
 .sidebar {
   margin-top: 86px;
@@ -202,7 +198,6 @@
   right: 0;
   height: 100%;
   width: 325px;
-  /* Adjust width as needed */
   background-color: #f5f5f5;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
   padding: 0px;
@@ -214,7 +209,8 @@
   border: none;
   cursor: pointer;
   font-size: 16px;
-  color: white; /* Set the color to white */
+  color: white;
+  /* Set the color to white */
   padding: 0;
 }
 
@@ -248,16 +244,29 @@
 .sidebar-buttons {
   margin: 20px;
   display: flex;
-  justify-content: space-between;
-  margin-top: 20px; /* Add space between body content and buttons */
+  justify-content: center;
+  align-items: center;
 }
 
-.reset-button,
+/* .reset-button,
 .apply-button {
   display: flex;
-  justify-content: center; /* Centers horizontally */
-  align-items: center; /* Centers vertically */
+  justify-content: center;
+
+  align-items: center;
+
   margin-top: 380px;
+  width: 129px;
+  height: 32px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+} */
+
+.reset-button {
+  background-color: white;
+  color: #7bc1e1;
   width: 129px;
   height: 32px;
   font-size: 16px;
@@ -266,28 +275,27 @@
   cursor: pointer;
 }
 
-.reset-button {
-  background-color: white; /* Adjust color as needed */
-  color: #7bc1e1;
-}
+/* .apply-button {
+  background-color: white;
 
-.apply-button {
-  background-color: white; /* Adjust color as needed */
   color: #7bc1e1;
-}
+} */
 
 
 .provider-sidebar-buttons {
   margin: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
 }
 
 .provider-reset-button,
 .provider-apply-button {
   display: flex;
-  justify-content: center; /* Centers horizontally */
-  align-items: center; /* Centers vertically */
+  justify-content: center;
+
+  align-items: center;
+
   margin-top: 250px;
   width: 129px;
   height: 32px;
@@ -299,14 +307,20 @@
 
 
 .provider-reset-button {
-  background-color: white; /* Adjust color as needed */
+  background-color: white;
   color: #7bc1e1;
+  width: 129px;
+  height: 32px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.provider-apply-button {
-  background-color: white; /* Adjust color as needed */
+/* .provider-apply-button {
+  background-color: white;
   color: #7bc1e1;
-}
+} */
 
 
 
@@ -357,7 +371,7 @@
 
 /* ////////////////////////////////////// */
 
-.profileContainer{
+.profileContainer {
   display: flex;
   flex-direction: column;
   background-color: #CFDFE7;
@@ -382,7 +396,7 @@
   margin-bottom: 0px;
   display: flex;
   align-items: center;
-  
+
 }
 
 .back-button {
@@ -566,7 +580,7 @@
 
 .ServicesOffered {
   background-color: #ffffff;
-  height: 225px;
+  height: 210px;
   color: black;
   padding-left: 10px;
   padding-top: 10px;
@@ -579,7 +593,7 @@
   font-family: 'GothicA1';
   color: black;
   margin-left: 20px;
-  bottom: auto; 
+  bottom: auto;
   margin-top: 10px;
 }
 
@@ -654,75 +668,107 @@
 label {
   width: 300px;
   padding-left: 25px;
-  font-size: 16px; /* Adjust font size as needed */
-  color: black; /* Adjust text color */
-  margin-bottom: 5px; /* Add spacing between label and dropdown */
+  font-size: 16px;
+  /* Adjust font size as needed */
+  color: black;
+  /* Adjust text color */
+  margin-bottom: 5px;
+  /* Add spacing between label and dropdown */
   margin-top: 20px;
   font-family: 'GothicA1';
 }
 
 /* Style the dropdown menu */
 #location-dropdown {
-  width: 200px; /* Adjust width as needed */
-  padding: 10px; /* Add padding for better appearance */
-  font-size: px; /* Adjust font size as needed */
-  border: 1px solid #ccc; /* Add border for better visibility */
-  border-radius: 5px; /* Add border radius for rounded corners */
-  background-color: #fff; /* Set background color */
+  width: 200px;
+  /* Adjust width as needed */
+  padding: 10px;
+  /* Add padding for better appearance */
+  font-size: px;
+  /* Adjust font size as needed */
+  border: 1px solid #ccc;
+  /* Add border for better visibility */
+  border-radius: 5px;
+  /* Add border radius for rounded corners */
+  background-color: #fff;
+  /* Set background color */
 }
 
 /* Style dropdown options */
 #location-dropdown option {
-  font-size: 32px; /* Adjust font size as needed */
-  background-color: #fff; /* Set background color for options */
-  color: #333; /* Set text color for options */
+  font-size: 32px;
+  /* Adjust font size as needed */
+  background-color: #fff;
+  /* Set background color for options */
+  color: #333;
+  /* Set text color for options */
 }
 
 /* Style dropdown arrow */
 /* Note: Styling the dropdown arrow is not fully supported in all browsers */
 #location-dropdown::-ms-expand {
-  display: none; /* Hide default arrow in IE/Edge */
+  display: none;
+  /* Hide default arrow in IE/Edge */
 }
+
 #location-dropdown::after {
-  content: '\25BC'; /* Unicode character for down arrow */
+  content: '\25BC';
+  /* Unicode character for down arrow */
   position: absolute;
   top: 50%;
-  right: 10px; /* Adjust position as needed */
+  right: 10px;
+  /* Adjust position as needed */
   transform: translateY(-50%);
-  pointer-events: none; /* Ensure the arrow does not interfere with clicking the dropdown */
+  pointer-events: none;
+  /* Ensure the arrow does not interfere with clicking the dropdown */
 }
 
 #location-dropdown1 {
   margin-top: 3px;
   margin-left: 20px;
-  width: 280px; /* Adjust width as needed */
+  width: 280px;
+  /* Adjust width as needed */
   height: 35px;
-  padding-left: 5px; /* Add padding for better appearance */
-  font-size: 16px; /* Adjust font size as needed */
-  border: 1px solid #ccc; /* Add border for better visibility */
-  background-color: #fff; /* Set background color */
+  padding-left: 5px;
+  /* Add padding for better appearance */
+  font-size: 16px;
+  /* Adjust font size as needed */
+  border: 1px solid #ccc;
+  /* Add border for better visibility */
+  background-color: #fff;
+  /* Set background color */
 }
 
 #location-dropdown2 {
   margin-top: 3px;
   margin-left: 20px;
-  width: 280px; /* Adjust width as needed */
+  width: 280px;
+  /* Adjust width as needed */
   height: 35px;
-  padding-left: 5px; /* Add padding for better appearance */
-  font-size: 16px; /* Adjust font size as needed */
-  border: 1px solid #ccc; /* Add border for better visibility */
-  background-color: #fff; /* Set background color */
+  padding-left: 5px;
+  /* Add padding for better appearance */
+  font-size: 16px;
+  /* Adjust font size as needed */
+  border: 1px solid #ccc;
+  /* Add border for better visibility */
+  background-color: #fff;
+  /* Set background color */
 }
 
 #category-dropdown {
   margin-top: 3px;
   margin-left: 20px;
-  width: 280px; /* Adjust width as needed */
+  width: 280px;
+  /* Adjust width as needed */
   height: 35px;
-  padding-left: 5px; /* Add padding for better appearance */
-  font-size: 16px; /* Adjust font size as needed */
-  border: 1px solid #ccc; /* Add border for better visibility */
-  background-color: #fff; /* Set background color */
+  padding-left: 5px;
+  /* Add padding for better appearance */
+  font-size: 16px;
+  /* Adjust font size as needed */
+  border: 1px solid #ccc;
+  /* Add border for better visibility */
+  background-color: #fff;
+  /* Set background color */
 }
 
 .checkbox-container {
@@ -750,9 +796,11 @@ label {
 }
 
 .sorting-buttons {
-  display: flex; /* Ensures the buttons are arranged horizontally */
+  display: flex;
+  /* Ensures the buttons are arranged horizontally */
   margin-top: 15px;
-  margin-left: 10px; /* Adjust as needed */
+  margin-left: 10px;
+  /* Adjust as needed */
   margin-right: 25.5px;
 }
 
@@ -762,15 +810,18 @@ label {
   border: 1px solid #ccc;
   background-color: #fff;
   cursor: pointer;
-  margin-right: 5px; /* Adjust as needed */
+  margin-right: 5px;
+  /* Adjust as needed */
 }
 
 .sort-button.active {
-  background-color: #f0f0f0; /* Gray background when active */
+  background-color: #f0f0f0;
+  /* Gray background when active */
 }
 
 .sort-button:last-child {
-  margin-right: 0; /* Remove margin from the last button */
+  margin-right: 0;
+  /* Remove margin from the last button */
 }
 
 .serviceDetailsOverlay {
@@ -779,7 +830,7 @@ label {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.4);
-  
+
   z-index: 9999;
 }
 
@@ -805,8 +856,9 @@ label {
 }
 
 .serviceDetailsTitle {
-  font-size: 20px;
+  font-size: 25px;
   font-weight: bold;
+  margin-right: auto;
 }
 
 .serviceDetailsBody {
@@ -828,10 +880,36 @@ label {
 }
 
 .serviceDetailsScheduleDay {
+  font-family: sans-serif;
   font-weight: bold;
+
 }
 
 .serviceDetailsScheduleTime {
   font-style: italic;
 }
 
+.serviceDetailsDay {
+  text-align: center;
+}
+
+.dayLabel {
+  margin-top: 5px;
+  font-family: sans-serif;
+  font-style: bold;
+  margin-bottom: 10px;
+}
+
+.logOutButton {
+  margin-top: 20px;
+  width: 100px;
+  height: 40px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #7bc1e1;
+  color: white;
+  position: absolute;
+  right: 20px;
+}

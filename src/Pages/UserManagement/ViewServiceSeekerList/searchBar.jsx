@@ -54,6 +54,7 @@ const SearchBar = ({ onSearch, onSort, findByCity, findByBarangay, findByFlag, s
     findByCity('');
     findByBarangay('');
     setFlaggedProviders(false);
+    findByFlag(false);
 
     const dropdown = document.getElementById('location-dropdown');
     dropdown.selectedIndex = 0;
@@ -211,7 +212,7 @@ const Sidebar = ({ onClose, sortBy, onSort, resetFilters, setSelectedLocation1, 
         </div>
         <div className="sidebar-buttons">
           <button className="provider-reset-button" onClick={handleReset}>Reset</button>
-          <button className="provider-apply-button">Apply</button>
+          {/* <button className="provider-apply-button">Apply</button> */}
         </div>
       </div>
     </div>

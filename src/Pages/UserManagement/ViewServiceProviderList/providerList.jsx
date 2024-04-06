@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaEllipsisV, FaAngleLeft, FaStar, FaStarHalfAlt } from 'react-icons/fa';
 import { Table, Dropdown, Menu, Space } from 'antd';
-import { getFirestore, collection, getDocs, onSnapshot, doc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, onSnapshot, doc, deleteDoc, getDoc } from 'firebase/firestore';
 import Axios from 'axios';
 
 function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged, onSelectUser, toggleSearchBarVisibility }) {
@@ -10,6 +10,8 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
   const [showServiceOverlay, setShowServiceOverlay] = useState(false);
+  const [deletedUser, setDeletedUser] = useState(false);
+  const [unsuspendUser, setUnsuspendUser] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -61,8 +63,10 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
           }));
           providerInfo.services = serviceData;
           providerData.push(providerInfo);
+          console.log(providerInfo)
+
         }));
-        
+
         setDataSource(providerData);
         setLoading(false);
 
@@ -70,18 +74,21 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
         console.error("Error fetching providers: ", error);
       } finally {
         setLoading(false);
+        setDeletedUser(false);
+        setUnsuspendUser(false);
       }
     };
 
-    const unsubscribe = onSnapshot(providerCollection, () => {
-      fetchProviders();
-    });
+    fetchProviders();
 
-    return () => unsubscribe();
+    // const unsubscribe = onSnapshot(providerCollection, () => {
+    //   fetchProviders();
+    // });
+
+    // return () => unsubscribe();
 
 
-  }, [flagged, selectedUser]);
-  
+  }, [flagged, selectedUser, deletedUser, unsuspendUser]);
 
   const filteredDataByFlag = dataSource.filter((data) => {
     if (flagged === false) {
@@ -89,7 +96,7 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
     } else if (data.suspension && data.suspension.isSuspended === true) {
       return data;
     }
-});
+  });
 
   const filteredDataByCategory = filteredDataByFlag.filter((data) => {
     if (category === '') {
@@ -134,59 +141,61 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
     }
   });
 
-  
-
-
-useEffect(() => {
-  if (selectedUser) {
-    onSelectUser(selectedUser);
-    const db = getFirestore();
-    const providerCollection = collection(db, "providers");
-    const providerDoc = doc(providerCollection, selectedUser.id);
-
-    const unsubscribe = onSnapshot(providerDoc, async (doc) => {
-      const data = doc.data();
-      const firstName = data.name?.firstName || "";
-      const lastName = data.name?.lastName || "";
-      const fullName = `${firstName} ${lastName}`;
-      const streetAddress1 = data.address?.streetAddress1 || "";
-      const streetAddress2 = data.address?.streetAddress2 || "";
-      const barangay = data.address?.barangay || "";
-      const city = data.address?.cityMunicipality || "";
-      const fullAddress = `${streetAddress1}, ${streetAddress2}, ${barangay}, ${city}`;
-      const updatedUser = {
-        id: doc.id,
-        fullName: fullName,
-        address: fullAddress,
-        rating: data.rating || 0,
-        completedServices: data.completedServices || 0,
-        reportsReceived: data.reportsReceived || 0,
-        violationRecord: data.violationRecord || 0,
-        services: data.services || [],
-        
-      };
-      const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
-      const userData = response.data.data;
-      updatedUser.profileImage = userData.profileImage;
-      updatedUser.email = userData.email;
-      updatedUser.phone = userData.mobile;
-      const serviceCollection = collection(db, "services");
-      const serviceData = [];
-      await Promise.all(updatedUser.services.map(async (service) => {
-        const serviceDoc = await getDocs(serviceCollection);
-        serviceDoc.forEach((doc) => {
-          if (doc.id === service) {
-            serviceData.push(doc.data());
-          }
-        });
-      }));
-      updatedUser.services = serviceData;
-      setSelectedUser(updatedUser);
-    });
-
-    return () => unsubscribe();
+  if (!filteredDataBySort) {
+    return null;
   }
-}, [selectedUser, onSelectUser]);
+
+
+  // useEffect(() => {
+  //   if (selectedUser) {
+  //     onSelectUser(selectedUser);
+  //     const db = getFirestore();
+  //     const providerCollection = collection(db, "providers");
+  //     const providerDoc = doc(providerCollection, selectedUser.id);
+
+  //     const unsubscribe = onSnapshot(providerDoc, async (doc) => {
+  //       const data = doc.data();
+  //       const firstName = data.name?.firstName || "";
+  //       const lastName = data.name?.lastName || "";
+  //       const fullName = `${firstName} ${lastName}`;
+  //       const streetAddress1 = data.address?.streetAddress1 || "";
+  //       const streetAddress2 = data.address?.streetAddress2 || "";
+  //       const barangay = data.address?.barangay || "";
+  //       const city = data.address?.cityMunicipality || "";
+  //       const fullAddress = `${streetAddress1}, ${streetAddress2}, ${barangay}, ${city}`;
+  //       const updatedUser = {
+  //         id: doc.id,
+  //         fullName: fullName,
+  //         address: fullAddress,
+  //         rating: data.rating || 0,
+  //         completedServices: data.completedServices || 0,
+  //         reportsReceived: data.reportsReceived || 0,
+  //         violationRecord: data.violationRecord || 0,
+  //         services: data.services || [],
+
+  //       };
+  //       const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
+  //       const userData = response.data.data;
+  //       updatedUser.profileImage = userData.profileImage;
+  //       updatedUser.email = userData.email;
+  //       updatedUser.phone = userData.mobile;
+  //       const serviceCollection = collection(db, "services");
+  //       const serviceData = [];
+  //       await Promise.all(updatedUser.services.map(async (service) => {
+  //         const serviceDoc = await getDocs(serviceCollection);
+  //         serviceDoc.forEach((doc) => {
+  //           if (doc.id === service) {
+  //             serviceData.push(doc.data());
+  //           }
+  //         });
+  //       }));
+  //       updatedUser.services = serviceData;
+  //       setSelectedUser(updatedUser);
+  //     });
+
+  //     return () => unsubscribe();
+  //   }
+  // }, [selectedUser, onSelectUser]);
 
 
   const renderName = (text, record) => (
@@ -194,7 +203,7 @@ useEffect(() => {
       style={{ textAlign: 'left', fontSize: '20px', cursor: 'pointer' }}
       onClick={() => handleItemClick(record)}
     >
-      {text}  
+      {text}
     </span>
   );
 
@@ -224,71 +233,107 @@ useEffect(() => {
   };
 
   const handleSubMenuClick = (record, action) => {
-    
+
     try {
       const userData = {
         userId: record.id,
         action: action
       }
-    Axios.patch('http://192.168.1.10:5000/admin/suspendUser', userData)
-      .then((response) => {
-        alert('User suspended successfully');
-      }
-      )
-      .catch((error) => {
-        console.error('Error suspending user: ', error);
-      });
+      Axios.patch('http://192.168.1.10:5000/admin/suspendUser', userData)
+        .then((response) => {
+          alert('User suspended successfully');
+        }
+        )
+        .catch((error) => {
+          console.error('Error suspending user: ', error);
+        });
     } catch (error) {
       console.error('Error suspending user: ', error);
     }
   }
 
-  const handleDelete = (record) => { 
+  const handleDelete = (record) => {
     const userData = {
       userId: record.id
-    }   
-    Axios.delete(`http://192.168.1.10:5000/admin/deleteUser`, userData)
+    };
+    Axios.post(`http://192.168.1.10:5000/admin/deleteUser`, userData)
       .then((response) => {
         const db = getFirestore();
         const providerCollection = collection(db, "providers");
         const providerDoc = doc(providerCollection, record.id);
         const providerServices = collection(db, "services");
-        providerServices.get()
+        getDocs(providerServices)
           .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
               if (doc.data().providerId === record.id) {
-                doc.ref.delete();
+                deleteDoc(doc.ref) // Use doc.ref here to get the reference
+                  .then(() => {
+                    console.log("Document successfully deleted");
+                  })
+                  .catch((error) => {
+                    console.error("Error deleting Firestore document: ", error);
+                  });
               }
             });
+            deleteDoc(providerDoc)
+              .then(() => {
+                alert("User deleted successfully");
+                setDeletedUser(true);
+              })
+              .catch((error) => {
+                console.error("Error deleting Firestore document: ", error);
+              });
           })
           .catch((error) => {
-            console.error('Error deleting Firestore document: ', error);
-          });
-        providerDoc.delete()
-          .then(() => {
-            alert('User deleted successfully');
-          })
-          .catch((error) => {
-            console.error('Error deleting Firestore document: ', error);
+            console.error("Error getting documents: ", error);
           });
       })
       .catch((error) => {
-        console.error('Error deleting user: ', error);
+        console.error("Error deleting user: ", error);
       });
+  };
+
+
+
+
+  const handleUnsuspend = (record) => {
+    try {
+      const userData = {
+        email: record.email
+      }
+      Axios.patch('http://192.168.1.10:5000/admin/unsuspendUser', userData)
+        .then((response) => {
+          alert('User unsuspended successfully');
+          setUnsuspendUser(true);
+        })
+        .catch((error) => {
+          console.error('Error unsuspending user: ', error);
+        });
+    } catch (error) {
+      console.error('Error unsuspending user: ', error);
+    }
   }
-  
 
+  const renderActions = (text, record) => {
+    
+    if (!record) {
+      return null;
+    }
 
-  const renderActions = (text, record) => (
+    return (
     <Dropdown
       overlay={
         <Menu>
           <Menu.Item key="reward">Reward</Menu.Item>
-          <Menu.SubMenu title="Suspend">
-            <Menu.Item key="5_hours" onClick={() => handleSubMenuClick(record, 5)}>5 hours</Menu.Item>
-            <Menu.Item key="1_day" onClick={() => handleSubMenuClick(record, 24)}>1 day</Menu.Item>
-            <Menu.Item key="1_week" onClick={() => handleSubMenuClick(record, 168)}>1 week</Menu.Item>
-          </Menu.SubMenu>
+          {record.suspension && record.suspension.isSuspended === true ? <Menu.Item key="unsuspend" onClick={() => handleUnsuspend(record)}>Unsuspend</Menu.Item> : <Menu.SubMenu title="Suspend">
+              <Menu.Item key="5_hours" onClick={() => handleSubMenuClick(record, 5)}>5 hours</Menu.Item>
+              <Menu.Item key="1_day" onClick={() => handleSubMenuClick(record, 24)}>1 day</Menu.Item>
+              <Menu.Item key="1_week" onClick={() => handleSubMenuClick(record, 168)}>1 week</Menu.Item>
+            </Menu.SubMenu>
+          } 
+            
+
+
           <Menu.Item key="delete" onClick={() => handleDelete(record)}>Delete</Menu.Item>
         </Menu>
       }
@@ -298,7 +343,8 @@ useEffect(() => {
         <FaEllipsisV />
       </span>
     </Dropdown>
-  );
+    )
+    };
 
   const renderStarRating = (rating) => {
     const fullStars = Math.floor(rating);
@@ -317,7 +363,7 @@ useEffect(() => {
 
     return <div className="star-rating">{stars}</div>;
   };
-    
+
   function UserDetails({ userDetails }) {
     const { email, phone, address } = userDetails;
 
@@ -357,6 +403,7 @@ useEffect(() => {
 
   return (
     <div>
+      
       {selectedUser && (
         <div>
           <div className="profileHeader">
@@ -386,19 +433,19 @@ useEffect(() => {
             <div className='leftSide'>
               <UserDetails userDetails={selectedUser} />
               <div className='ServicesOffered'>Services Offered:
-              {selectedUser.services.map((service, index) => (
-                <div key={index} className='ServicesOfferedList' onClick={() => handleServiceClick(service)}>
-                  {service.name} ({service.serviceType})
-                </div>
-              ))
-              }
+                {selectedUser.services.map((service, index) => (
+                  <div key={index} className='ServicesOfferedList' onClick={() => handleServiceClick(service)}>
+                    {service.name} ({service.serviceType})
+                  </div>
+                ))
+                }
               </div>
             </div>
             <div class="verticalLine"></div>
             <div className="userDetailCardsContainerProvider">
-                <UserDetailCard title={"Completed Services"} value={selectedUser.completedServices} />
-                <UserDetailCard title={"Reports Received"} value={selectedUser.reportsReceived} />
-                <UserDetailCard title={"Violation Record"} value={selectedUser.violationRecord} />
+              <UserDetailCard title={"Completed Services"} value={selectedUser.completedServices} />
+              <UserDetailCard title={"Reports Received"} value={selectedUser.reportsReceived} />
+              <UserDetailCard title={"Violation Record"} value={selectedUser.violationRecord} />
             </div>
             <div className='Performance'>For graphs:</div>
           </div>
@@ -436,37 +483,46 @@ useEffect(() => {
             pagination={false}
           />
         </div>
-      
-      
+
+
       )}
 
       {showServiceOverlay && selectedService && (
-              <div className="serviceDetailsOverlay">
-                <div className="serviceDetails">
-                  <div className="serviceDetailsHeader">
-                    <div className="back-button" onClick={() => setShowServiceOverlay(false)}>
-                      <FaAngleLeft />
+        <div className="serviceDetailsOverlay">
+          <div className="serviceDetails">
+            <div className="serviceDetailsHeader">
+              <div className="back-button" onClick={() => setShowServiceOverlay(false)}>
+                <FaAngleLeft />
+              </div>
+              <div className="serviceDetailsTitle">{selectedService.name}</div>
+            </div>
+            <div className="serviceDetailsBody">
+              <hr></hr>
+              <div className="serviceDetailsDescription">{selectedService.description}</div>
+              <hr></hr>
+              <div className="serviceDetailsPrice"> ₱{selectedService.price.min} - ₱{selectedService.price.max}</div>
+              {/* Design a week schedule regarding the availability displaying all 7 days with start time and end time */}
+              <hr></hr>
+              <div className="serviceDetailsSchedule">
+                {selectedService.availability.map((day, index) => (
+                  <div>
+                    <div key={index} className="serviceDetailsDay">
+                      <div>
+                        <div className='dayLabel'>{day.day}</div>
+                      </div>
+                      <div>
+                        <div>{day.startTime}</div>
+                        <div> - </div>
+                        <div>{day.endTime}</div>
+                      </div>
                     </div>
-                    <div className="serviceDetailsTitle">{selectedService.name}</div>
                   </div>
-                  <div className="serviceDetailsBody">
-                    <div className="serviceDetailsDescription">{selectedService.description}</div>
-                    <div className="serviceDetailsPrice"> ₱{selectedService.price.min} - ₱{selectedService.price.max}</div>
-                    {/* Design a week schedule regarding the availability displaying all 7 days with start time and end time */}
-                    <div className="serviceDetailsSchedule">
-                      {selectedService.availability.map((day, index) => (
-                        <div key={index} className="serviceDetailsDay">
-                          <div>{day.day}</div>
-                          <div>{day.startTime}</div>
-                          <div> - </div>
-                          <div>{day.endTime}</div>
-                        </div>
-                      ))}
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
-            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 

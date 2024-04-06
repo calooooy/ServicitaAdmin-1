@@ -14,6 +14,7 @@ function AdminRoutes() {
     return (
         
             <Routes>
+                <Route path="/" element={<Dashboard />} ></Route>
                 <Route path="/dashboard" element={<Dashboard />} ></Route>
                 <Route path="/viewSeekerList" element={<ViewServiceSeekerList />} ></Route>
                 <Route path="/viewProviderList" element={<ViewServiceProviderList />} ></Route>

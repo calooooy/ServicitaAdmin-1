@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { FaEllipsisV, FaAngleLeft, FaStar, FaStarHalfAlt } from 'react-icons/fa';
 import { Table, Dropdown, Menu, Space } from 'antd';
-import { getFirestore, collection, getDocs, onSnapshot, doc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, getDoc, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
 import Axios from 'axios';
 
 function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUser, toggleSearchBarVisibility }) {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [deletedUser, setDeletedUser] = useState(false);
+  const [unsuspendUser, setUnsuspendUser] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -47,7 +49,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
           seekerInfo.suspension = userData.suspension;
           seekerData.push(seekerInfo);
         }));
-        
+
         setDataSource(seekerData);
         setLoading(false);
 
@@ -55,18 +57,22 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
         console.error("Error fetching seekers ", error);
       } finally {
         setLoading(false);
+        setDeletedUser(false);
+        setUnsuspendUser(false);
       }
     };
 
-    const unsubscribe = onSnapshot(seekerCollection, () => {
-      fetchSeekers();
-    });
+    fetchSeekers();
 
-    return () => unsubscribe();
+    // const unsubscribe = onSnapshot(seekerCollection, () => {
+    //   fetchSeekers();
+    // });
+
+    // return () => unsubscribe();
 
 
-  }, [flagged, selectedUser]);
-    
+  }, [flagged, selectedUser, deletedUser, unsuspendUser]);
+
 
   const filteredDataByFlag = dataSource.filter((data) => {
     if (flagged === false) {
@@ -74,7 +80,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
     } else if (data.suspension && data.suspension.isSuspended === true) {
       return data;
     }
-});
+  });
 
   const filteredDataByCity = filteredDataByFlag.filter((data) => {
 
@@ -112,50 +118,50 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
   });
 
 
-  useEffect(() => {
-    if (selectedUser) {
-      onSelectUser(selectedUser);
-      const db = getFirestore();
-      const seekerCollection = collection(db, "seekers");
-      const seekerDoc = doc(seekerCollection, selectedUser.id);
-  
-      const unsubscribe = onSnapshot(seekerDoc, async (doc) => {
-        const data = doc.data();
-        const firstName = data.name?.firstName || "";
-        const lastName = data.name?.lastName || "";
-        const fullName = `${firstName} ${lastName}`;
-        const streetAddress1 = data.address?.streetAddress1 || "";
-        const streetAddress2 = data.address?.streetAddress2 || "";
-        const barangay = data.address?.barangay || "";
-        const city = data.address?.cityMunicipality || "";
-        const fullAddress = `${streetAddress1}, ${streetAddress2}, ${barangay}, ${city}`;
-        const updatedUser = {
-          id: doc.id,
-          fullName: fullName,
-          address: fullAddress,
-          rating: data.rating || 0,
-          servicesAvailed: data.servicesAvailed || 0,
-          reportsReceived: data.reportsReceived || 0,
-          violationRecord: data.violationRecord || 0,
-        };
-        const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
-        const userData = response.data.data;
-        updatedUser.profileImage = userData.profileImage;
-        updatedUser.email = userData.email;
-        updatedUser.phone = userData.mobile;
-        setSelectedUser(updatedUser);
-      });
-  
-      return () => unsubscribe();
-    }
-  }, [selectedUser, onSelectUser]);
+  // useEffect(() => {
+  //   if (selectedUser) {
+  //     onSelectUser(selectedUser);
+  //     const db = getFirestore();
+  //     const seekerCollection = collection(db, "seekers");
+  //     const seekerDoc = doc(seekerCollection, selectedUser.id);
+
+  //     const unsubscribe = onSnapshot(seekerDoc, async (doc) => {
+  //       const data = doc.data();
+  //       const firstName = data.name?.firstName || "";
+  //       const lastName = data.name?.lastName || "";
+  //       const fullName = `${firstName} ${lastName}`;
+  //       const streetAddress1 = data.address?.streetAddress1 || "";
+  //       const streetAddress2 = data.address?.streetAddress2 || "";
+  //       const barangay = data.address?.barangay || "";
+  //       const city = data.address?.cityMunicipality || "";
+  //       const fullAddress = `${streetAddress1}, ${streetAddress2}, ${barangay}, ${city}`;
+  //       const updatedUser = {
+  //         id: doc.id,
+  //         fullName: fullName,
+  //         address: fullAddress,
+  //         rating: data.rating || 0,
+  //         servicesAvailed: data.servicesAvailed || 0,
+  //         reportsReceived: data.reportsReceived || 0,
+  //         violationRecord: data.violationRecord || 0,
+  //       };
+  //       const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
+  //       const userData = response.data.data;
+  //       updatedUser.profileImage = userData.profileImage;
+  //       updatedUser.email = userData.email;
+  //       updatedUser.phone = userData.mobile;
+  //       setSelectedUser(updatedUser);
+  //     });
+
+  //     return () => unsubscribe();
+  //   }
+  // }, [selectedUser, onSelectUser]);
 
   const renderName = (text, record) => (
     <span
       style={{ textAlign: 'left', fontSize: '20px', cursor: 'pointer' }}
       onClick={() => handleItemClick(record)}
     >
-      {text}  
+      {text}
     </span>
   );
 
@@ -185,7 +191,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
   };
 
   const handleSubMenuClick = (record, action) => {
-    
+
     try {
       const userData = {
         userId: record.id,
@@ -195,40 +201,30 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
       if (typeof action !== 'number') {
         throw new Error('Action must be a number');
       }
-    Axios.patch('http://192.168.1.10:5000/admin/suspendUser', userData)
-      .then((response) => {
-        alert('User suspended successfully');
-      }
-      )
-      .catch((error) => {
-        console.error('Error suspending user: ', error);
-      });
+      Axios.patch('http://192.168.1.10:5000/admin/suspendUser', userData)
+        .then((response) => {
+          alert('User suspended successfully');
+        }
+        )
+        .catch((error) => {
+          console.error('Error suspending user: ', error);
+        });
     } catch (error) {
       console.error('Error suspending user: ', error);
     }
   }
 
-  const handleDelete = (record) => {    
-    Axios.delete(`http://192.168.1.10:5000/admin/deleteUser`, userData)
+  const handleDelete = (record) => {
+    console.log(record.id)
+    Axios.post(`http://192.168.1.10:5000/admin/deleteUser`, { userId: record.id })
       .then((response) => {
         const db = getFirestore();
-        const providerCollection = collection(db, "providers");
-        const providerDoc = doc(providerCollection, record.id);
-        const providerServices = collection(db, "services");
-        providerServices.get()
-          .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-              if (doc.data().providerId === record.id) {
-                doc.ref.delete();
-              }
-            });
-          })
-          .catch((error) => {
-            console.error('Error deleting Firestore document: ', error);
-          });
-        providerDoc.delete()
+        const seekerCollection = collection(db, "seekers");
+        const seekerDoc = doc(seekerCollection, record.id);
+        deleteDoc(seekerDoc)
           .then(() => {
             alert('User deleted successfully');
+            setDeletedUser(true);
           })
           .catch((error) => {
             console.error('Error deleting Firestore document: ', error);
@@ -239,15 +235,44 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
       });
   }
 
-  const renderActions = (text, record) => (
+  const handleUnsuspend = (record) => {
+    try {
+      const userData = {
+        email: record.email
+      }
+      Axios.patch('http://192.168.1.10:5000/admin/unsuspendUser', userData)
+        .then((response) => {
+          alert('User unsuspended successfully');
+          setUnsuspendUser(true);
+        })
+        .catch((error) => {
+          console.error('Error unsuspending user: ', error);
+        });
+    } catch (error) {
+      console.error('Error unsuspending user: ', error);
+    }
+  }
+
+  const renderActions = (text, record) => {
+    
+    if (!record) {
+      return null;
+    }
+
+    return (
     <Dropdown
       overlay={
         <Menu>
-          <Menu.SubMenu title="Suspend">
-            <Menu.Item key="5_hours" onClick={() => handleSubMenuClick(record, 5)}>5 hours</Menu.Item>
-            <Menu.Item key="1_day" onClick={() => handleSubMenuClick(record, 24)}>1 day</Menu.Item>
-            <Menu.Item key="1_week" onClick={() => handleSubMenuClick(record, 168)}>1 week</Menu.Item>
-          </Menu.SubMenu>
+          <Menu.Item key="reward">Reward</Menu.Item>
+          {record.suspension && record.suspension.isSuspended === true ? <Menu.Item key="unsuspend" onClick={() => handleUnsuspend(record)}>Unsuspend</Menu.Item> : <Menu.SubMenu title="Suspend">
+              <Menu.Item key="5_hours" onClick={() => handleSubMenuClick(record, 5)}>5 hours</Menu.Item>
+              <Menu.Item key="1_day" onClick={() => handleSubMenuClick(record, 24)}>1 day</Menu.Item>
+              <Menu.Item key="1_week" onClick={() => handleSubMenuClick(record, 168)}>1 week</Menu.Item>
+            </Menu.SubMenu>
+          } 
+            
+
+
           <Menu.Item key="delete" onClick={() => handleDelete(record)}>Delete</Menu.Item>
         </Menu>
       }
@@ -257,7 +282,9 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
         <FaEllipsisV />
       </span>
     </Dropdown>
-  );
+    )
+    };
+
 
   const renderStarRating = (rating) => {
     const fullStars = Math.floor(rating);
@@ -323,7 +350,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
             <div>
               <p className="profile-username">{selectedUser.fullName}</p>
               {/* Star rating frame */}
-              
+
               {/* Add more details as needed */}
             </div>
 
