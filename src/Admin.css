@@ -913,3 +913,12 @@ label {
   position: absolute;
   right: 20px;
 }
+
+.userNameDisplay {
+  /* font-size: 15px;
+  position: absolute;
+  top: 65px;
+  right: 20px; */
+  font-size: 40px;
+  margin-right: 20px;
+}

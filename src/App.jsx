@@ -18,15 +18,20 @@ function App() {
     localStorage.setItem('isLoggedIn', 'true');
   };
 
+  const fetchAdminName = (name) => {
+    localStorage.setItem('adminName', name);
+  }
+
   const handleLogout = () => {
     setIsLoggedIn(false);
     localStorage.setItem('isLoggedIn', 'false');
+    localStorage.removeItem('adminName');
   };
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login onLogin={handleLogin} />} />
+        <Route path="/" element={<Login onLogin={handleLogin} adminName={fetchAdminName} />} />
         <Route path="/home/*" element={isLoggedIn ? <AdminHome onLogout={handleLogout} /> : <Navigate to="/" />}
         />
       </Routes>

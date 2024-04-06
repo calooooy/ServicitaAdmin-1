@@ -3,7 +3,7 @@ import './../Login.css';
 import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const Login = ({ onLogin }) => {
+const Login = ({ onLogin, adminName }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -20,13 +20,11 @@ const Login = ({ onLogin }) => {
         navigate('/home/dashboard');
         alert("Login successful");
         onLogin();
-      } else {
-        alert("Login failed");
-        console.log("Login failed");
+        adminName(username);
       }
     } catch (error) {
       console.log(error);
-      alert("Login request failed. Please try again.");
+      alert(error.response.data.message);
     }
   }
 

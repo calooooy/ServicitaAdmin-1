@@ -7,7 +7,7 @@ import SideMenu from '../AdminHomeComponents/SideMenu/SideMenu';
 function AdminHome({onLogout}) {
     return <div className="AdminHome">
        <AdminHeader/>
-      
+
        <div className='SideMenuAndPageContent'>
          
         <SideMenu></SideMenu>
