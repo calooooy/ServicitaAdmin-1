@@ -144,7 +144,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
   //         reportsReceived: data.reportsReceived || 0,
   //         violationRecord: data.violationRecord || 0,
   //       };
-  //       const response = await Axios.get(`http://172.16.4.26:5000/admin/getUser/${doc.id}`);
+  //       const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
   //       const userData = response.data.data;
   //       updatedUser.profileImage = userData.profileImage;
   //       updatedUser.email = userData.email;
@@ -160,9 +160,78 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
     <span
       style={{ textAlign: 'left', fontSize: '20px', cursor: 'pointer' }}
       onClick={() => handleItemClick(record)}
+      onMouseEnter={(e) => { e.target.style.textDecoration = 'underline'; e.target.style.color = '#75B9D9'; }} // Underline on hover
+      onMouseLeave={(e) => { e.target.style.textDecoration = 'none'; e.target.style.color = 'black'; }} // Remove underline when not hovered
+      // onClick={(e) => e.preventDefault()} // Prevent default click behavior
     >
       {text}
     </span>
+  );
+
+  const renderEmail = (text, record) => (
+    <div
+      style={{ display: 'flex', justifyContent: 'left', cursor: 'pointer' }}
+      onClick={() => handleItemClick(record)}
+    >
+      <span
+        style={{
+          textAlign: 'center',
+          textDecoration: 'none', // Remove underline by default
+          color: 'inherit' // Use the default text color
+        }}
+        onMouseEnter={(e) => { e.target.style.textDecoration = 'underline'; e.target.style.color = '#75B9D9'; }} // Underline on hover
+        onMouseLeave={(e) => { e.target.style.textDecoration = 'none'; e.target.style.color = 'black'; }} // Remove underline when not hovered
+        onClick={(e) => e.preventDefault()} // Prevent default click behavior
+      >
+        {text}
+      </span>
+    </div>
+  );
+
+
+  const renderMobile = (text, record) => {
+    const phoneNumber = text.startsWith('+63') ? '0' + text.slice(3) : text;
+    return (
+      <div
+        style={{ display: 'flex', justifyContent: 'center', cursor: 'pointer' }}
+        onClick={() => handleItemClick(record)}
+      >
+        <span
+          style={{
+            textAlign: 'center',
+            textDecoration: 'none', // Remove underline by default
+            color: 'inherit' // Use the default text color
+          }}
+          onMouseEnter={(e) => { e.target.style.textDecoration = 'underline'; e.target.style.color = '#75B9D9'; }} // Underline on hover
+          onMouseLeave={(e) => { e.target.style.textDecoration = 'none'; e.target.style.color = 'black'; }} // Remove underline when not hovered
+          onClick={(e) => e.preventDefault()} // Prevent default click behavior
+        >
+          {phoneNumber}
+        </span>
+      </div>
+    );
+  };
+
+  const renderServicesAvailed = (text, record) => (
+    <div
+      style={{ display: 'flex', justifyContent: 'center', cursor: 'pointer' }}
+      onClick={() => handleItemClick(record)}
+    >
+      <div style={{ width: 200, height: 35, backgroundColor: '#CFDFE7', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <span style={{ textAlign: 'center' }}>{"Services Availed: " + text}</span>
+      </div>
+    </div>
+  );
+
+  const renderReportsReceived = (text, record) => (
+    <div
+      style={{ display: 'flex', justifyContent: 'center', cursor: 'pointer' }}
+      onClick={() => handleItemClick(record)}
+    >
+      <div style={{ width: 200, height: 35, backgroundColor: '#CFDFE7', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <span style={{ textAlign: 'center' }}>{"Reports Received: " + text}</span>
+      </div>
+    </div>
   );
 
   const renderImage = (url, record) => (
@@ -182,7 +251,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
 
   const handleItemClick = (record) => {
     setSelectedUser(record);
-    toggleSearchBarVisibility(false);
+    toggleSearchBarVisibility(true);
   };
 
   const handleCloseProfile = () => {
@@ -253,32 +322,37 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
     }
   }
 
-  const renderActions = (text, record) => (
-    <Dropdown
-      overlay={
-        <Menu>
-          <Menu.Item key="reward">Reward</Menu.Item>
-          {/* {record.suspension && record.suspension.isSuspended === true ? (
-            <Menu.Item key="unsuspend" onClick={() => handleUnsuspend(record)}>Unsuspend</Menu.Item>
-          ) : ( */}
-            <Menu.SubMenu title="Suspend">
+  const renderActions = (text, record) => {
+
+    if (!record) {
+      return null;
+    }
+
+    return (
+      <Dropdown
+        overlay={
+          <Menu>
+            <Menu.Item key="reward">Reward</Menu.Item>
+            {record.suspension && record.suspension.isSuspended === true ? <Menu.Item key="unsuspend" onClick={() => handleUnsuspend(record)}>Unsuspend</Menu.Item> : <Menu.SubMenu title="Suspend">
               <Menu.Item key="5_hours" onClick={() => handleSubMenuClick(record, 5)}>5 hours</Menu.Item>
               <Menu.Item key="1_day" onClick={() => handleSubMenuClick(record, 24)}>1 day</Menu.Item>
               <Menu.Item key="1_week" onClick={() => handleSubMenuClick(record, 168)}>1 week</Menu.Item>
             </Menu.SubMenu>
-          {/* )} */}
+            }
 
 
-          <Menu.Item key="delete" onClick={() => handleDelete(record)}>Delete</Menu.Item>
-        </Menu>
-      }
-      trigger={['click']}
-    >
-      <span className="ellipsis-icon">
-        <FaEllipsisV />
-      </span>
-    </Dropdown>
-  );
+
+            <Menu.Item key="delete" onClick={() => handleDelete(record)}>Delete</Menu.Item>
+          </Menu>
+        }
+        trigger={['click']}
+      >
+        <span className="ellipsis-icon">
+          <FaEllipsisV />
+        </span>
+      </Dropdown>
+    )
+  };
 
 
   const renderStarRating = (rating) => {
@@ -351,7 +425,7 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
 
             {/* Profile actions */}
             <div className="profile-actions">
-              {renderActions()}
+              {renderActions(selectedUser, selectedUser)}
             </div>
 
           </div>
@@ -393,6 +467,22 @@ function SeekerList({ searchTerm, sortTerm, city, barangay, flagged, onSelectUse
               {
                 dataIndex: "fullName",
                 render: (text, record) => renderName(text, record)
+              },
+              {
+                dataIndex: "email",
+                render: (text, record) => renderEmail(text, record)
+              },
+              {
+                dataIndex: "phone",
+                render: (text, record) => renderMobile(text, record)
+              },
+              {
+                dataIndex: "servicesAvailed",
+                render: (text, record) => renderServicesAvailed(text, record)
+              },
+              {
+                dataIndex: "reportsReceived",
+                render: (text, record) => renderReportsReceived(text, record)
               },
               {
                 dataIndex: 'actions',

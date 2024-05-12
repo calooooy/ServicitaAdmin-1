@@ -1,8 +1,216 @@
 import React, { useState, useEffect } from 'react';
 import { FaEllipsisV, FaAngleLeft, FaStar, FaStarHalfAlt } from 'react-icons/fa';
-import { Table, Dropdown, Menu, Space } from 'antd';
+import { Table, Dropdown, Menu, Space, Flex } from 'antd';
 import { getFirestore, collection, getDocs, onSnapshot, doc, deleteDoc, getDoc } from 'firebase/firestore';
 import Axios from 'axios';
+
+
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title, } from 'chart.js';
+import { Doughnut, Bar } from 'react-chartjs-2';
+
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title,);
+
+
+//doughnut graph
+const options1 = {
+  cutout: 90,
+  plugins: {
+    legend: {
+      display: false,
+      position: 'bottom'
+    },
+  },
+  layout: {
+    padding: {
+      bottom: 0, // Adjust bottom padding to create space between graph and legend
+    },
+  },
+};
+
+const textCenter = (selectedUser) => ({
+  id: 'textCenter',
+  beforeDatasetsDraw(chart, args, options) {
+    const { ctx, chartArea, data } = chart;
+    const dataset = data.datasets[0];
+    //const total = dataset.data.reduce((acc, value, index) => acc + value * (dataset.data.length - index), 0);
+    //const count = dataset.data.reduce((acc, value) => acc + value, 0);
+    //const average = total / count;
+    const text = selectedUser.rating;
+    //? `${selectedUser.rating}` : `${average.toFixed(2)}`;
+
+    const fontSize = 80;
+    const centerX = (chartArea.left + chartArea.right) / 2;
+    const centerY = (chartArea.top + chartArea.bottom) / 2;
+
+    ctx.save();
+    ctx.fillStyle = '#04528A';
+    ctx.font = `${fontSize}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, centerX, centerY);
+    ctx.restore();
+  }
+});
+
+function generateRandomData(numLabels, min, max) {
+  const data = [];
+  for (let i = 0; i < numLabels; i++) {
+    data.push(Math.floor(Math.random() * (max - min + 1)) + min);
+  }
+  return data;
+}
+
+function PieGraph({selectedUser}) {
+  const labels = ['5', '4', '3', '2', '1'];
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Rating Count',
+        data: [1, 3, 0, 0, 0],
+        //[0, 0, 0, 0, 0],
+        //generateRandomData(labels.length, 30, 100), // Generate random data between 30 and 100
+        backgroundColor: [
+          '#00365B',
+          '#004E84',
+          '#0070C8',
+          '#76A8D5',
+          '#CFDBE7',
+        ],
+        borderColor: [
+          '#00365C',
+          '#004E85',
+          '#0070C9',
+          '#76A8D6',
+          '#CFDBE8',  
+        ],
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  return (
+    <div style={{ width: '250px', height: '250px' }}>
+      <Doughnut options={options1} data={data} plugins={[textCenter(selectedUser)]} />
+    </div>
+  );
+}
+
+//bar graph
+
+const options2 = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+      position: 'bottom',
+    },
+    title: {
+      display: false,
+      text: 'Response Time',
+    },
+  },
+};
+
+function getRandomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function BarGraph() {
+  const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: 'Response Time in s',
+        data: labels.map(() => getRandomNumber(30,60)),
+        backgroundColor: '#76A8D5',
+      }
+    ],
+  };
+
+  return <Bar options={options2} data={data} />;
+}
+
+
+
+
+
+/*
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Doughnut } from 'react-chartjs-2';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+const options = {
+  plugins: {
+    legend: {
+      display: false,
+      position: 'bottom'
+    },
+  },
+  layout: {
+    padding: {
+      bottom: 0, // Adjust bottom padding to create space between graph and legend
+    },
+  },
+};
+
+const textCenter = {
+  id: 'textCenter',
+  beforeDatasetsDraw(chart, argsm, pluginOptions) {
+    const {ctx, data} = chart;
+    
+    ctx.save();
+    ctx.font = 'bolder 30px sans-serif';
+    ctx.fillStyle = 'red';
+    ctx.fillText('text', chart.getDatasetMeta(0).data[0].x, chart.getDatasetMeta(0).data[0].y);
+  }
+}
+
+function generateRandomData(numLabels, min, max) {
+  const data = [];
+  for (let i = 0; i < numLabels; i++) {
+    data.push(Math.floor(Math.random() * (max - min + 1)) + min);
+  }
+  return data;
+}
+
+function PieGraph() {
+  const labels = ['5', '4', '3', '2', '1'];
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Rating Count',
+        data: generateRandomData(labels.length, 30, 100), // Generate random data between 1 and 10
+        backgroundColor: [
+          '#00365B',
+          '#004E84',
+          '#0070C8',
+          '#76A8D5',
+          '#CFDBE7',
+        ],
+        borderColor: [
+          '#00365C',
+          '#004E85',
+          '#0070C9',
+          '#76A8D6',
+          '#CFDBE8',  
+        ],
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  return (
+    <div style={{ width: '300px', height: '300px' }}>
+      <Doughnut options={options} data={data} plugins = {[textCenter]}/>
+    </div>
+  );
+}
+*/
+
 
 function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged, onSelectUser, toggleSearchBarVisibility }) {
   const [dataSource, setDataSource] = useState([]);
@@ -39,7 +247,8 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
             address: fullAddress,
             city: data.address.cityMunicipality || "",
             barangay: data.address.barangay || "",
-            rating: data.rating || 0,
+            rating: data.rating || "no rating yet",
+            ratingCount: data.ratingCount,
             completedServices: data.completedServices || 0,
             reportsReceived: data.reportsReceived || 0,
             violationRecord: data.violationRecord || 0,
@@ -174,7 +383,7 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
   //         services: data.services || [],
 
   //       };
-  //       const response = await Axios.get(`http://172.16.4.26:5000/admin/getUser/${doc.id}`);
+  //       const response = await Axios.get(`http://192.168.1.10:5000/admin/getUser/${doc.id}`);
   //       const userData = response.data.data;
   //       updatedUser.profileImage = userData.profileImage;
   //       updatedUser.email = userData.email;
@@ -202,10 +411,82 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
     <span
       style={{ textAlign: 'left', fontSize: '20px', cursor: 'pointer' }}
       onClick={() => handleItemClick(record)}
+      onMouseEnter={(e) => { e.target.style.textDecoration = 'underline'; e.target.style.color = '#75B9D9'; }} // Underline on hover
+      onMouseLeave={(e) => { e.target.style.textDecoration = 'none'; e.target.style.color = 'black'; }} // Remove underline when not hovered
+      // onClick={(e) => e.preventDefault()} // Prevent default click behavior
     >
       {text}
     </span>
+
   );
+
+  const renderEmail = (text, record) => (
+    <div
+      style={{ display: 'flex', justifyContent: 'left', cursor: 'pointer' }}
+      onClick={() => handleItemClick(record)}
+    >
+      <span
+        style={{
+          textAlign: 'center',
+          textDecoration: 'none', // Remove underline by default
+          color: 'inherit' // Use the default text color
+        }}
+        onMouseEnter={(e) => { e.target.style.textDecoration = 'underline'; e.target.style.color = '#75B9D9'; }} // Underline on hover
+        onMouseLeave={(e) => { e.target.style.textDecoration = 'none'; e.target.style.color = 'black'; }} // Remove underline when not hovered
+        onClick={(e) => e.preventDefault()} // Prevent default click behavior
+      >
+        {text}
+      </span>
+    </div>
+  );
+
+
+  const renderMobile = (text, record) => {
+    const phoneNumber = text.startsWith('+63') ? '0' + text.slice(3) : text;
+    return (
+      <div
+        style={{ display: 'flex', justifyContent: 'center', cursor: 'pointer' }}
+        onClick={() => handleItemClick(record)}
+      >
+        <span
+          style={{
+            textAlign: 'center',
+            textDecoration: 'none', // Remove underline by default
+            color: 'inherit' // Use the default text color
+          }}
+          onMouseEnter={(e) => { e.target.style.textDecoration = 'underline'; e.target.style.color = '#75B9D9'; }} // Underline on hover
+          onMouseLeave={(e) => { e.target.style.textDecoration = 'none'; e.target.style.color = 'black'; }} // Remove underline when not hovered
+          onClick={(e) => e.preventDefault()} // Prevent default click behavior
+        >
+          {phoneNumber}
+        </span>
+      </div>
+    );
+  };
+
+
+  const renderCompletedServices = (text, record) => (
+    <div
+      style={{ display: 'flex', justifyContent: 'center', cursor: 'pointer' }}
+      onClick={() => handleItemClick(record)}
+    >
+      <div style={{ width: 200, height: 35, backgroundColor: '#CFDFE7', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <span style={{ textAlign: 'center' }}>{"Completed Services: " + text}</span>
+      </div>
+    </div>
+  );
+
+  const renderRating = (text, record) => (
+    <div
+      style={{ display: 'flex', justifyContent: 'center', cursor: 'pointer' }}
+      onClick={() => handleItemClick(record)}
+    >
+      <div style={{ width: 200, height: 35, backgroundColor: '#CFDFE7', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <span style={{ textAlign: 'center' }}>{"Rating: " + text}</span>
+      </div>
+    </div>
+  );
+
 
   const renderImage = (url, record) => (
     <div
@@ -223,8 +504,9 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
   );
 
   const handleItemClick = (record) => {
+    console.log(record.id)
     setSelectedUser(record);
-    toggleSearchBarVisibility(false);
+    toggleSearchBarVisibility(true);
   };
 
   const handleCloseProfile = () => {
@@ -314,32 +596,37 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
     }
   }
 
-  const renderActions = (text, record) => (
-    <Dropdown
-      overlay={
-        <Menu>
-          <Menu.Item key="reward">Reward</Menu.Item>
-          {/* {record.suspension && record.suspension.isSuspended === true ? (
-            <Menu.Item key="unsuspend" onClick={() => handleUnsuspend(record)}>Unsuspend</Menu.Item>
-          ) : ( */}
-            <Menu.SubMenu title="Suspend">
+  const renderActions = (text, record) => {
+
+    if (!record) {
+      return null;
+    }
+
+    return (
+      <Dropdown
+        overlay={
+          <Menu>
+            <Menu.Item key="reward">Reward</Menu.Item>
+            {record.suspension && record.suspension.isSuspended === true ? <Menu.Item key="unsuspend" onClick={() => handleUnsuspend(record)}>Unsuspend</Menu.Item> : <Menu.SubMenu title="Suspend">
               <Menu.Item key="5_hours" onClick={() => handleSubMenuClick(record, 5)}>5 hours</Menu.Item>
               <Menu.Item key="1_day" onClick={() => handleSubMenuClick(record, 24)}>1 day</Menu.Item>
               <Menu.Item key="1_week" onClick={() => handleSubMenuClick(record, 168)}>1 week</Menu.Item>
             </Menu.SubMenu>
-          {/* )} */}
+            }
 
 
-          <Menu.Item key="delete" onClick={() => handleDelete(record)}>Delete</Menu.Item>
-        </Menu>
-      }
-      trigger={['click']}
-    >
-      <span className="ellipsis-icon">
-        <FaEllipsisV />
-      </span>
-    </Dropdown>
-  );
+
+            <Menu.Item key="delete" onClick={() => handleDelete(record)}>Delete</Menu.Item>
+          </Menu>
+        }
+        trigger={['click']}
+      >
+        <span className="ellipsis-icon">
+          <FaEllipsisV />
+        </span>
+      </Dropdown>
+    )
+  };
 
   const renderStarRating = (rating) => {
     const fullStars = Math.floor(rating);
@@ -398,7 +685,7 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
 
   return (
     <div>
-      
+
       {selectedUser && (
         <div>
           <div className="profileHeader">
@@ -420,11 +707,11 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
 
             {/* Profile actions */}
             <div className="profile-actions">
-              {renderActions()}
+              {renderActions(selectedUser, selectedUser)}
             </div>
 
           </div>
-          <div className="profileBody">
+          <div className="profileBody" style={{display: 'flex', flexDirection: 'row'}}>
             <div className='leftSide'>
               <UserDetails userDetails={selectedUser} />
               <div className='ServicesOffered'>Services Offered:
@@ -432,17 +719,65 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
                   <div key={index} className='ServicesOfferedList' onClick={() => handleServiceClick(service)}>
                     {service.name} ({service.serviceType})
                   </div>
-                ))
+                  ))
                 }
               </div>
             </div>
+
             <div class="verticalLine"></div>
-            <div className="userDetailCardsContainerProvider">
-              <UserDetailCard title={"Completed Services"} value={selectedUser.completedServices} />
-              <UserDetailCard title={"Reports Received"} value={selectedUser.reportsReceived} />
-              <UserDetailCard title={"Violation Record"} value={selectedUser.violationRecord} />
+            
+            <div className='rightSide' style={{display: 'flex', flexDirection: 'column', overflowY: 'auto', paddingRight: '10px'}}>
+              <div className="userDetailCardsContainerProvider">
+                <UserDetailCard title={"Completed Services"} value={selectedUser.completedServices} />
+                <UserDetailCard title={"Reports Received"} value={selectedUser.reportsReceived} />
+                <UserDetailCard title={"Violation Record"} value={selectedUser.violationRecord} />
+              </div>
+              <div className='Performance' style={{alignItems:'center', display:'flex', flexDirection:'column', padding: '20px', paddingTop: '10px'}}>
+                
+  <div style={{backgroundColor: 'white', width:'100%', marginBottom: '0px', textAlign: 'center'}}>
+    <div className='customerRatingLabel'>Customer Rating</div>
+    <div style={{display: 'grid', justifyItems:'center', alignItems: 'center', padding: '0px'}}>
+      <PieGraph selectedUser={selectedUser}/>
+      {selectedUser.ratingCount !== 0 && (
+        <div className='Legend' style={{display: 'flex', flexDirection: 'column', margin: '20px', width: '100%', padding: '10px', marginTop: '10px'}}>
+          <div className='up' style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-around', gap: '10px'}}>
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+              <div style={{width: '15px', height:'15px', borderRadius:'50%', backgroundColor:'#00365B', marginRight: '3px'}}></div>
+              <div>5 stars</div>
             </div>
-            <div className='Performance'>For graphs:</div>
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+              <div style={{width: '15px', height:'15px', borderRadius:'50%', backgroundColor:'#004E84', marginRight: '3px'}}></div>
+              <div>4 stars</div>
+            </div>
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+              <div style={{width: '15px', height:'15px', borderRadius:'50%', backgroundColor:'#0070C8', marginRight: '3px'}}></div>
+              <div>3 stars</div>
+            </div>
+          </div>
+          <div className='down' style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly'}}>
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+              <div style={{width: '15px', height:'15px', borderRadius:'50%', backgroundColor:'#76A8D5', marginRight: '3px'}}></div>
+              <div>2 stars</div>
+            </div>
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+              <div style={{width: '15px', height:'15px', borderRadius:'50%', backgroundColor:'#CFDBE7', marginRight: '3px'}}></div>
+              <div>1 stars</div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+  <div style={{backgroundColor: 'white', width:'100%', height:'300px', margin: '20px', textAlign: 'center'}}>
+    <div className='customerRatingLabel'>Response Time by Weekday</div>
+    <div style={{display: 'grid', justifyItems:'center', alignItems: 'center', padding: '20px', paddingTop: '20px'}}>
+      <BarGraph />
+    </div>
+  </div>
+</div>
+
+            </div>
+
           </div>
         </div>
       )}
@@ -466,6 +801,22 @@ function ProviderList({ searchTerm, sortTerm, category, city, barangay, flagged,
               {
                 dataIndex: "fullName",
                 render: (text, record) => renderName(text, record)
+              },
+              {
+                dataIndex: "email",
+                render: (text, record) => renderEmail(text, record)
+              },
+              {
+                dataIndex: "phone",
+                render: (text, record) => renderMobile(text, record)
+              },
+              {
+                dataIndex: "completedServices",
+                render: (text, record) => renderCompletedServices(text, record)
+              },
+              {
+                dataIndex: "rating",
+                render: (text, record) => renderRating(text, record)
               },
               {
                 dataIndex: 'actions',
