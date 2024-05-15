@@ -20,7 +20,7 @@ const Login = ({ onLogin, adminName }) => {
         navigate('/home/dashboard');
         alert("Login successful");
         onLogin();
-        adminName(username);
+        adminName(response.data.data.name.nickName);
       }
     } catch (error) {
       console.log(error);

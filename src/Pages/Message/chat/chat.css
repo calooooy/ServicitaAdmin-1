@@ -68,6 +68,7 @@
             max-width: 70%;
             display: flex;
             gap: 20px;
+            margin-top: auto;
 
             p {
                 margin: 0px;

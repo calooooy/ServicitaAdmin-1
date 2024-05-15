@@ -4,7 +4,7 @@ import { Table, Dropdown, Menu, Space, Card, Spin } from 'antd';
 import { getFirestore, collection, getDocs, onSnapshot, doc, deleteDoc, getDoc, updateDoc } from 'firebase/firestore';
 import Axios from 'axios';
 
-function ResolvedComplaints() {
+function PendingComplaints() {
 	const [loading, setLoading] = useState(false);
 	const [dataSource, setDataSource] = useState([]);
 	const [changes, setChanges] = useState(false);
@@ -100,7 +100,7 @@ function ResolvedComplaints() {
 
 
 	const filterByStatus = dataSource.filter((report => {
-		if (report.status == 'RESOLVED') {
+		if (report.status == 'PENDING') {
 			return report;
 		}
 	}))
@@ -135,21 +135,25 @@ function ResolvedComplaints() {
 		console.log("For view")
 	}
 
-	// const handleResolve = (record) => {
-	// 	console.log("For resolve")
-	// 	console.log(record.reason)
-	// 	setUpdating(true)
+	const handleTakeAction = async (record) => {
+		console.log("For Take Action")
+		console.log(record.reason)
+		setUpdating(true)
 
-	// 	try{
-			
-	// 	} catch (error) {
-
-	// 	} finally {
-	// 		setTimeout(() => {
-	// 			setUpdating(false); // Set updating/loading state to false after a delay
-	// 		}, 1200);
-	// 	}
-	// }
+		try{
+            await Axios.put(`http://172.16.4.26:5000/report/updateReport/${record.id}`, {
+                status: 'IN PROGRESS'
+              });
+			setChanges(true)
+			setLoading(true)
+		} catch (error) {
+            console.error("Error:", error)
+		} finally {
+			setTimeout(() => {
+				setUpdating(false); // Set updating/loading state to false after a delay
+			}, 1200);
+		}
+	}
 
 	const renderActions = (record) => {
 		if (!record) {
@@ -161,11 +165,12 @@ function ResolvedComplaints() {
 			overlay={
 			  <Menu>
 				<Menu.Item key="delete" onClick={() => handleIgnore(record)}>Ignore</Menu.Item>
-				<Menu.SubMenu title="Resolve">
+                <Menu.Item key="delete" onClick={() => handleTakeAction(record)}>Take Action</Menu.Item>
+				{/* <Menu.SubMenu title="Resolve">
 				  <Menu.Item key="5_hours" onClick={() => handleSubMenuClick(record, 5)}>5 hours</Menu.Item>
 				  <Menu.Item key="1_day" onClick={() => handleSubMenuClick(record, 24)}>1 day</Menu.Item>
 				  <Menu.Item key="1_week" onClick={() => handleSubMenuClick(record, 168)}>1 week</Menu.Item>
-				</Menu.SubMenu>
+				</Menu.SubMenu> */}
 			  </Menu>
 			}
 			trigger={['click']}
@@ -211,7 +216,7 @@ function ResolvedComplaints() {
 	return (
 		<div className='reviewComplaints'>
 			<div>
-				<h1 className='DashboardHeader'>Review Complaints</h1>
+				<h1 className='DashboardHeader'>Pending Complaints</h1>
 				<hr className='Divider' style={{ width: '1185px' }} />
 			</div>
 			<div className='reviewComplaintsRender'>
@@ -221,7 +226,7 @@ function ResolvedComplaints() {
 					</div>
 				) : (
 				filterByStatus.length === 0 ? (
-				<div>No current complaints to review</div>
+				<div>No current Pending Complaints to review</div>
 			) : (
 				<div className='complaints-scroller'>
 					{changes ? (
@@ -231,7 +236,7 @@ function ResolvedComplaints() {
 						) : (
 							<>
 							<div className='complaintsCount'>
-							Complaints to Review: {dataSource.length}
+							Pending Complaints to Review: {filterByStatus.length}
 							</div>
 					{filterByStatus.map((reportInfoData, index) => (
 						<div key={reportInfoData.id} className='complaintsCard'>
@@ -278,6 +283,6 @@ function ResolvedComplaints() {
 	);
 
 }
-export default ResolvedComplaints
+export default PendingComplaints
 
 

@@ -171,7 +171,7 @@ function ResolvedComplaints() {
 			trigger={['click']}
 		  >
 			<span className="ellipsis-icon">
-			  <FaEllipsisV />
+			  {/* <FaEllipsisV /> */}
 			</span>
 		  </Dropdown>
 		)
@@ -211,7 +211,7 @@ function ResolvedComplaints() {
 	return (
 		<div className='reviewComplaints'>
 			<div>
-				<h1 className='DashboardHeader'>Review Complaints</h1>
+				<h1 className='DashboardHeader'>Resolved Complaints</h1>
 				<hr className='Divider' style={{ width: '1185px' }} />
 			</div>
 			<div className='reviewComplaintsRender'>
@@ -221,7 +221,7 @@ function ResolvedComplaints() {
 					</div>
 				) : (
 				filterByStatus.length === 0 ? (
-				<div>No current complaints to review</div>
+				<div>No current Resolved Complaints to review</div>
 			) : (
 				<div className='complaints-scroller'>
 					{changes ? (
@@ -231,7 +231,7 @@ function ResolvedComplaints() {
 						) : (
 							<>
 							<div className='complaintsCount'>
-							Complaints to Review: {dataSource.length}
+							Resolved Complaints to Review: {filterByStatus.length}
 							</div>
 					{filterByStatus.map((reportInfoData, index) => (
 						<div key={reportInfoData.id} className='complaintsCard'>

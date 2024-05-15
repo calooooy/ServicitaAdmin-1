@@ -52,7 +52,11 @@ function SideMenu() {
           label: "Content Moderation", icon: <ContainerOutlined style={{ fontSize: '20px' }} />, key: "/home/contentModeration", children: [
             { label: "New Service Listing", icon: <FileAddOutlined style={{ fontSize: '20px' }} />, key: "/home/newServiceListing" },
             // { label: "Ratings and Reviews", icon: <StarOutlined style={{ fontSize: '20px' }} />, key: "/home/ratingsAndReviews" },
-            { label: "Review Complaints", icon: <FrownOutlined style={{ fontSize: '20px' }} />, key: "/home/reviewComplaints" }
+            { label: "Review Complaints", icon: <FrownOutlined style={{ fontSize: '20px' }} />, key: "/home/reviewComplaints", children: [
+              { label: "Pending Complaints", key: "/home/reviewComplaints/pendingComplaints" },
+              { label: "In Progress Complaints", key: "/home/reviewComplaints/inProgressComplaints"},
+              { label: "Resolved Complaints", key: "/home/reviewComplaints/resolvedComplaints"}
+            ]}
           ]
         }
       ]}></Menu>
