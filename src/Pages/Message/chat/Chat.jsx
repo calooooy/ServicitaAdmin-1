@@ -245,16 +245,14 @@ const Chat = ( {message} ) => {
                         {msg.user._id !== message.usersId.admin && <img src={message.usersImage.user} alt="Avatar" />}
                         
                         {msg.image ? (
-                           <>
-                           <div className="img-text-container">
-                               <div className="img">
-                                   <img src={msg.image} alt="Image" />
-                               </div>
-                               <div className="texts">
-                                   <span>{formatTimeStamps(msg.createdAt)}</span>
-                               </div>
-                           </div>
-                       </>
+            <div className="img-text-container">
+                <div className={`img ${msg.user._id === message.usersId.admin ? 'own' : ''}`}>
+                    <img src={msg.image} alt="Image" />
+                </div>
+                <div className="texts">
+                    <span>{formatTimeStamps(msg.createdAt)}</span>
+                </div>
+            </div>
                        
                         ) :   <div className="texts">
                                 <p>{msg.text}</p>

@@ -91,6 +91,8 @@
                         /* margin: 8px 0px; */
                     }
                 }
+
+
             }
 
             .img-text-container {
@@ -106,8 +108,14 @@
 
                 border-radius: 15px;
                 overflow: hidden; /* Ensure image is contained within container */
+
+
+            }
+
+            .img.own {
                 background-color: #1C729A;
             }
+            
             
             .img img {
                 width: 100%; /* Adjust image width */
