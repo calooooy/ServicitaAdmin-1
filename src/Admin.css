@@ -16,6 +16,11 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Didact-Gothic';
+  src: url('./fonts/DidactGothic-Regular.ttf');
+}
+
 /* Repeat the @font-face block for other font weights/styles if applicable */
 @font-face {
   font-family: 'GothicA1';
@@ -35,18 +40,24 @@
   font-style: normal;
 }
 
-.body {}
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw; /* 100% of the viewport width */
+  height: 100vh; /* 100% of the viewport height */
+}
 
 .AdminHome {
   display: flex;
   background-color: #d9d9d9;
   flex-direction: column;
-  width: 1535px;
-  height: 824px;
+  width: 100vw; /* 100% of the viewport width */
+  height: 100vh; /* 100% of the viewport height */
 }
 
 .AdminHeader {
-  height: 86px;
+  width:100%;
+  height: 12%;
   background: linear-gradient(115deg, #011823, #7bc1e1);
   color: white;
   padding: '10px 0';
@@ -65,12 +76,12 @@
 }
 
 .SideMenu {
-  width: 340px;
-  height: 100%
+  width: 20%;
+  height: 100%;
 }
 
 .SideMenuVertical {
-  height: 100%
+  height: 100%;
 }
 
 .PageContent {}
@@ -79,7 +90,7 @@
   margin-left: auto;
   display: flex;
   align-items: center;
-  margin-right: 10px
+
 }
 
 
@@ -88,7 +99,10 @@
 .DashboardHeader {
   margin-top: 15px;
   margin-left: 10px;
+  /* margin-left: 15px;
+  margin-right: 15px; */
   width: 100%;
+  font-family: 'Didact-Gothic';
 
 }
 
@@ -106,33 +120,27 @@
 }
 
 .square {
-  margin-top: 20px;
-  margin-left: 20px;
-  width: 200px;
-  height: 285px;
+  width: 215px;
+  height: 190px;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-right: 10px;
+  justify-content: center;
 }
 
 .cardTitle {
   width: 50%;
-  margin-top: 20px;
-  margin-bottom: 30px;
-  font-family: 'GothicA1';
+  font-family: 'Didact-Gothic';
   font-size: 20px;
   color: black;
   text-align: center;
 }
 
 .value {
-  margin-top: 10px;
   color: #266f92;
   font-size: 64px;
-  font-family: 'GothicA1';
-  margin-left: 15px;
+  font-family: 'Didact-Gothic';
 }
 
 
@@ -140,14 +148,11 @@
   width: 400px;
   font-size: 25px;
   text-align: center;
-  margin-bottom: 10px;
-  font-family: 'GothicA1';
-
+  font-family: 'Didact-Gothic';
 }
 
 .TopPerforming {
   width: 100%;
-  margin-left: 25px;
 }
 
 
@@ -215,7 +220,7 @@
 }
 
 .filterHeader {
-  font-family: 'GothicA1';
+  font-family: 'Didact-Gothic';
   background-color: #83CAEB;
   height: 73px;
   display: flex;
@@ -428,7 +433,7 @@
   /* Adjust font size as needed */
   color: white;
   /* Adjust color as needed */
-  font-family: 'GothicA1';
+  font-family: 'Didact-Gothic';
   font-size: 32px;
 }
 
@@ -465,11 +470,11 @@
   color: white;
   height: 395px;
   width: 1100px;
-  margin: 0px 0;
+  /* margin: 0px 0; */
   padding: 20px;
   margin-left: 20px;
-  margin-right: 25px;
-  margin-bottom: 0px;
+  /* margin-right: 25px;
+  margin-bottom: 0px;  */
   display: flex;
 }
 
@@ -482,7 +487,7 @@
   background-color: white;
   padding: 3px 3px 3px 3px;
   margin-bottom: 3px;
-  font-family: 'GothicA1';
+  font-family: 'Didact-Gothic';
   font-size: 15px;
   display: flex;
   align-items: center;
@@ -509,7 +514,7 @@
   margin-top: 20px;
   margin-bottom: 30px;
   /* Adjusted for spacing */
-  font-family: 'GothicA1';
+  font-family: 'Didact-Gothic';
   font-size: 20px;
   color: black;
   text-align: center;
@@ -521,7 +526,7 @@
   color: black;
   font-size: 40px;
   /* Adjusted font size */
-  font-family: 'GothicA1';
+  font-family: 'Didact-Gothic';
 }
 
 .userDetailCardsContainer {
@@ -541,37 +546,37 @@
 
 .verticalLine {
   width: 2px;
-  height: 393px;
+  height: 100%;
   /* Adjust height as needed */
   background-color: white;
   /* Color of the divider */
-  margin-left: 20px;
+  /* margin-left: 20px; */
   /* Adjust margin as needed */
-  margin-top: 0px;
+  margin: 0px 15px;
 }
 
 .rightSide {
-  padding-left: 10px;
-  padding-top: 10px;
-  font-family: 'GothicA1';
+  /* padding-left: 10px;
+  padding-top: 10px; */
+  /* font-family: 'Didact-Gothic';
   font-size: 20px;
   color: black;
   margin-left: 20px;
-  margin-right: auto;
+  margin-right: auto; */
   /* Adjusted to auto to center the card horizontally */
-  width: 555px;
-  height: 379px;
-  background-color: #ffffff;
+  /* width: 555px; */
+  height: 395px;
+  /* background-color: #ffffff;
   display: flex;
   flex-direction: column;
-  padding-right: 10px;
+  padding-right: 10px; */
+  padding: 0px;
+  overflow-y: auto;
+  background-color: transparent;
 }
 
 .userDetailCardsContainerProvider {
-  margin-top: 0px;
-  margin-left: 20px;
-  display: flex;
-  justify-content: center;
+  
 }
 
 .user-details-wrapper {
@@ -584,13 +589,13 @@
   color: black;
   padding-left: 10px;
   padding-top: 10px;
-  font-family: 'GothicA1';
+  font-family: 'Didact-Gothic';
   font-size: 18px;
 }
 
 .ServicesOfferedList {
   font-size: 16px;
-  font-family: 'GothicA1';
+  font-family: 'Didact-Gothic';
   color: black;
   margin-left: 20px;
   bottom: auto;
@@ -598,16 +603,18 @@
 }
 
 .Performance {
-  background-color: #ffffff;
-  height: 225px;
-  width: 560px;
+  background-color: white;
+  height: auto; 
+  /* width: 100%; */
   color: black;
-  padding-left: 10px;
-  padding-top: 10px;
-  font-family: 'GothicA1';
+  /* padding-left: 10px;
+  padding-top: 10px; */
+  font-family: 'Didact-Gothic';
   font-size: 18px;
-  margin-left: 18px;
-  margin-top: 157px;
+  /* margin-left: 18px;
+  margin-top: 157px; */
+  margin: 4px;
+
 }
 
 
@@ -616,41 +623,39 @@
 
 
 .ProviderDetailCard {
-  margin-top: 0px;
-  margin-left: 520px;
+  margin: 5px;
+  /* margin-left: 520px; */
   width: 180px;
   height: 143px;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
 .ProviderDetailCardTitle {
   width: 50%;
   /* Adjusted to full width */
-  margin-top: 20px;
-  margin-bottom: 10px;
+  /* margin-top: 20px; */
+  /* margin-bottom: 10px; */
   /* Adjusted for spacing */
-  font-family: 'GothicA1';
+  font-family: 'Didact-Gothic';
   font-size: 20px;
   color: black;
   text-align: center;
 }
 
 .ProviderDetailCardValue {
-  margin-top: 5px;
+  /* margin-top: 5px; */
   /* Adjusted for spacing */
   color: black;
   font-size: 40px;
   /* Adjusted font size */
-  font-family: 'GothicA1';
+  font-family: 'Didact-Gothic';
 }
 
 .userDetailCardsContainerProvider {
-  position: absolute;
-  margin-top: 0px;
-  /* Adjust the margin-top as needed */
   display: flex;
   /* Added to make the container flex */
   justify-content: center;
@@ -658,7 +663,7 @@
 }
 
 .ProviderDetailCard+.ProviderDetailCard {
-  margin-left: 10px;
+  /* margin-left: 10px; */
   /* Adjusted to create space between cards */
 }
 
@@ -675,7 +680,7 @@ label {
   margin-bottom: 5px;
   /* Add spacing between label and dropdown */
   margin-top: 20px;
-  font-family: 'GothicA1';
+  font-family: 'Didact-Gothic';
 }
 
 /* Style the dropdown menu */
@@ -921,4 +926,351 @@ label {
   right: 20px; */
   font-size: 40px;
   margin-right: 20px;
+}
+
+/* ///////////////////NEW SERVICE LISTING /////////////// */
+
+.serviceName {
+  font-family: 'Didact-Gothic';
+  margin-top: 10px;
+  margin-bottom: 1px;
+  font-size: 21px;
+}
+
+.serviceprovider {
+  display: flex;
+  align-Items: center;
+  margin-Left: 5px;
+  margin-Top: -10px;
+}
+
+.provider-Name {
+  font-family: 'Didact-Gothic';
+  color: gray;
+  margin-Left: 8px;
+  font-Size: 15px;
+}
+
+.description {
+  font-family: 'Didact-Gothic';
+  margin-Right: 10px;
+  font-Size: 12px; 
+  height: 70px; 
+  max-Height: 70px;
+  overflow-Y: auto;
+  white-Space: pre-wrap;
+}
+
+.bottom-part {
+  display: flex;
+  justify-Content: end;
+  margin-Right: 15px; 
+  margin-Top: 0px;
+}
+
+.price {
+  font-family: 'Didact-Gothic';
+  color: #1C729A; 
+  font-Size: 30px;
+
+}
+
+.service-listing-ellipsis {
+  cursor: pointer;
+  display: inline-block;
+  border-radius: 50%;
+  height: 25px;
+  width: 25px;
+  margin-Right: 15px;
+  cursor: pointer;
+}
+
+.service-listing-ellipsis:hover {
+  background-color: #f0f0f0;
+  /* Change the color to the desired gray */
+}
+
+.book-now {
+  font-family: 'Quicksand-bold';
+  background-color: whitesmoke;
+  border: none;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  color:#266f92
+
+}
+
+.book-now:hover {
+  font-family: 'Quicksand-bold';
+  background-color: #266f92;
+  border: none;
+  box-shadow: 10px 5 10px rgba(0, 0, 0, 0.1);
+  color: whitesmoke;
+  border-radius: 3px;
+
+}
+
+
+
+
+/* ///////////////////////////////////////////////////////////////////////////////////////////////// */
+.newServiceListing {
+    width: 100%;
+}
+
+.newServiceListingRender {
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 0px;
+}
+
+.showSpinner {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  margin-left: 530px;
+  margin-top: 250px;
+}
+
+.service-scroller {
+  margin-top: 20px;
+  display: grid;
+  gap: 0px;
+  grid-auto-flow: column;
+  grid-auto-columns: 33%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  width: 1100px;
+  height: 570px;
+}
+
+.updateSpinner {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  margin-Left: 530px;
+  margin-Top: 250px;
+
+}
+
+.serviceListingCount {
+  font-family: 'Quicksand-bold';
+  color: gray;
+  width: 100%;
+  display: flex;
+  justify-content: left;
+  margin-top: -30px;
+  position: fixed;
+}
+
+.serviceCard {
+  width: 340px;
+  height: 540px;
+  background-color: #FFFFFF;
+  box-shadow: 7px 5px 5px rgba(30, 30, 30, 0.3);
+}
+
+.serviceCardContent {
+  width: 100%;
+  margin-right: 10px;
+  border-radius: 0px;
+}
+
+.serviceCardImage {
+  inline-size: 100%;
+  aspect-ratio: 4/4;
+  object-fit: cover;
+}
+
+.serviceContents {
+  margin-left: 10px;
+}
+
+.serviceHeader{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: -5px;
+}
+
+.serviceLeft {
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+
+.complaintsCount {
+  font-family: 'Quicksand-bold';
+  color: gray;
+  width: 100%; 
+  display: flex; 
+  justify-Content: left; 
+  margin-Top: -30px; 
+  position: fixed;
+}
+
+
+
+
+/* ///////////////////Review Complaints /////////////// */
+
+.reviewComplaints {
+  width: 100%;
+}
+
+.reviewComplaintsRender {
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 0px;
+}
+
+.complaints-scroller {
+  margin-Top: 20px;
+  display: flex;
+  flex-Wrap: wrap;
+  gap: 20px;
+  justify-Content: start;
+  overflow-Y: auto;
+  overscroll-Behavior-Inline: contain;
+  width: 1100px;
+  max-Height: 520px;
+  padding-Right: 20px;
+  padding-Bottom: 20px;
+}
+
+.complaintsCard {
+  position: relative;
+  width: calc(50% - 10px);
+  max-Width: 550px;
+  height: 300px;
+  background-Color: #FFFFFF;
+  box-Shadow: 7px 5px 5px rgba(30, 30, 30, 0.3)
+}
+
+.complaintsCardContent {
+  width: 100%;
+  margin-right: 10px;
+  border-radius: 0px;
+}
+
+.complaintsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.complaintsLeft {
+  display: flex;
+  flex-direction: column;
+}
+
+.reporter-Name {
+  font-Size: 20px;
+  color: black;
+  margin-Left: 15px;
+  margin-Bottom: 0px
+}
+
+.report-date {
+  font-family: 'Didact-Gothic';
+  font-Size: 12px;
+  color: gray; 
+  margin-Left: 15px;
+  margin-Top: 2px;
+}
+
+.complaintReason {
+  font-family: 'Didact-Gothic';
+  margin-Top: 15px;
+  font-Size: 12px;
+  max-Height: 140px;
+  overflow-Y: auto;
+  white-Space: pre-wrap;
+}
+
+.bottom-part1 {
+  display: flex;
+  justify-Content: flex-end;
+  align-items: flex-end;
+  margin-Right: 25px;
+  margin-Bottom: 25px;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+}
+
+.reported-user-label {
+  font-family: 'Didact-Gothic';
+  margin-Left: 0px;
+  margin-Right: 7px;
+  color: gray;
+  font-Size: 12px;
+}
+
+.reported-user-role {
+  font-family: 'Didact-Gothic';
+  margin-Left: 0px;
+  margin-Right: 3px;
+  color: gray;
+  font-Size: 12px;
+}
+
+.reported-user-name {
+  font-family: 'Didact-Gothic';
+  margin-Left: 0px;
+  margin-Right: 7px;
+  color: gray;
+  font-Size: 12px;
+}
+
+.reported-user-id {
+  font-family: 'Didact-Gothic';
+  margin-Left: 0px;
+  margin-Right: 3px;
+  color: gray;
+  font-Size: 12px;
+}
+
+.complaints-ellipsis {
+  cursor: pointer;
+  display: inline-block;
+  border-radius: 50%;
+  height: 25px;
+  width: 25px;
+  margin-Right: 0px;
+  cursor: pointer;
+}
+
+.complaints-ellipsis:hover {
+  background-color: #f0f0f0;
+  /* Change the color to the desired gray */
+}
+
+
+
+
+
+.customerRatingLabel {
+  font-family:'Didact-Gothic';
+  font-size: 25px;
+  padding: 10px;
+}
+
+
+
+
+/* /////////////////////////////////////MESSAGING//////////////////////////////////// */
+
+.message-container {
+  width: 75vw;
+  height: 70vh;
+  margin: 20px;
+  background-Color:rgba(17, 25, 40, 0.75); 
+  backdrop-Filter: blur(19px) saturate(180%);
+  color: #d9d9d9;
+  display: flex;
+  border-radius: 10px;
 }
