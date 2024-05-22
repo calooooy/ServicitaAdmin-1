@@ -5,7 +5,7 @@ import { useState } from "react";
 
 function AdminHeader({ onLogout }) {
 
-    const [username, setUsername] = useState(localStorage.getItem('adminName'));
+    const [username, setUsername] = useState(localStorage.getItem('adminNickname'));
     const location = useLocation();
 
     const getImagePath = (imageName) => {

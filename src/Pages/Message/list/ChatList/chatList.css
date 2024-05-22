@@ -51,35 +51,77 @@
         padding: 5px 20px;
         cursor: pointer;
         border-bottom: 1px solid gray;
-
-        img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .texts {
-            display: flex;
-            flex-direction: column;
-            gap: 0px;
-
-            span {
-                font-weight: 500;
-            }
-
-            p {
-                font-size: 12px;
-                font-weight: 300;
-                margin: 7px 0px
-            }
-        }
     }
     
+    .item img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .item .texts {
+        display: flex;
+        flex-direction: column;
+        gap: 0px;
+    }
+    
+    .item .texts span {
+        font-weight: 500;
+    }
+    
+    .item .texts p {
+        font-size: 12px;
+        font-weight: 300;
+        margin: 7px 0px;
+    }
+    
+    .item .time {
+        font-size: 12px;
+        font-weight: 300;
+    }
+    
+    .item .unread {
+        background-color: #00b87c;
+        color: white;
+        padding: 5px;
+        border-radius: 10px;
+        font-size: 12px;
+    }
+    
+    .item.selected {
+        background-color: rgba(17, 25, 40, 1); /* Apply background color to selected item */
+    }
+    
+    .item:hover {
+        background-color: rgba(17, 25, 40, 0.5);
+    }
+    
+
+   .spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+
+    .noChat {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        font-size: 20px;
+        font-weight: 500;
+    }
+
+    
+
     overflow-y: scroll;
     scrollbar-width: thin; /* For Firefox */
     scrollbar-color: rgba(17, 25, 40, 0.3) rgba(17, 25, 40, 0.1); 
  
+
+
 
     &::-webkit-scrollbar {
         width: 8px; /* Width of the scrollbar */

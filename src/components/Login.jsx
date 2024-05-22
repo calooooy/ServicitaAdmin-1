@@ -3,7 +3,7 @@ import './../Login.css';
 import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const Login = ({ onLogin, adminName }) => {
+const Login = ({ onLogin, adminNickname, adminFullname, adminId }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const Login = ({ onLogin, adminName }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await Axios.post('http://172.16.4.26:5000/admin/login', {
+      const response = await Axios.post('http://192.168.1.7:5000/admin/login', {
         username: username,
         password: password,
       });
@@ -20,7 +20,9 @@ const Login = ({ onLogin, adminName }) => {
         navigate('/home/dashboard');
         alert("Login successful");
         onLogin();
-        adminName(response.data.data.name.nickName);
+        adminNickname(response.data.data.name.nickName);
+        adminFullname(response.data.data.name.fullName);
+        adminId(response.data.data._id);
       }
     } catch (error) {
       console.log(error);
